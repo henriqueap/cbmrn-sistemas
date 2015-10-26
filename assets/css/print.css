@@ -1,0 +1,37 @@
+/*!
+ * @version 1.0
+ * Corpo de Bombeiros RN
+ * Todos os Direitos Reservados 2013.
+ */
+
+body {
+	font-size: 11px;
+}
+
+.center {
+	clear: both;
+	font-weight: bold;
+	text-align: center;
+}
+
+.left {
+	clear: both;
+	font-weight: bold;
+	text-align: left;
+}
+
+.right {
+	clear: both;
+	font-weight: bold;
+	text-align: right;
+}
+
+#secs h6 {
+	text-transform: uppercase;
+	text-align: center;
+}
+
+#logo img {
+	height: 100px;
+	width: 120px;
+}

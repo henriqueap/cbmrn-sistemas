@@ -1,0 +1,2200 @@
+/* Portal do Governo do RN - Folha de Estilos												*/
+/* Desenvolvido por Ionaldo Junior, Allan Fechine e Renato Kleber - IVIA, Abril de 2008		*/
+/* Modificado por AndrÃ© Souza andresouza@rn.gov.br - SEARH/COTIC, Janeiro de 2011			*/
+
+/* 
+	ZERANDO MARCADORES
+*/
+
+* { margin: 0; padding: 0; text-decoration: none; font-size: 1em; outline: none; }
+
+code, kbd, samp, pre, tt, var, textarea, input, select, isindex, listing, xmp, plaintext { font: inherit; font-size: 1em; white-space: normal; }
+
+a, img, a img, iframe, form, fieldset, abbr, acronym, object, applet, table { border: none; }
+
+table { border-collapse: collapse; border-spacing: 0; }
+
+caption, th, td, center { text-align: left; vertical-align: top; }
+
+body { line-height: 1; background: #e8f1f1 url("../img/bgRN.jpg") top left repeat-x; }
+
+q { quotes: "" ""; }
+
+ul, ol, dir, menu { list-style: none; }
+
+sub, sup { vertical-align: baseline; }
+
+a { color: inherit; }
+
+hr { display: none; } /* nÃ£o utilizamos hr no layout */
+
+font { color: inherit !important; font: inherit !important; color: inherit !important; } /* Desabilita alguns atributos font padrÃ£o nos navegadores */
+
+marquee { overflow: inherit !important; -moz-binding: none; }
+
+blink { text-decoration: none; }
+
+nobr { white-space: normal; }
+
+
+
+/* 
+	PRINCIPAL
+*/
+
+p {
+	font: 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #333333;
+	padding: 3px;
+}
+
+h1 {
+	font: bold 17px "Trebuchet MS", Tahoma, Verdana, Arial;
+	line-height: 115%;
+	margin: 10px 0 5px 0;
+	color: #0072bc;
+}
+
+h1 a { color: #0072bc; }
+
+h1 a:hover {
+	color: #0072bc;
+	text-decoration: underline;
+}
+
+label {
+	color:#999;
+	cursor:pointer;
+	padding-left:2px;
+	height:16px;
+	vertical-align:top;
+}
+
+label.chosen { color:#333; }
+
+
+/*
+	CAIXAS
+*/
+
+#geral {
+	width: 780px;
+	float: left; 
+	position:absolute;
+	left:50%;
+	padding: 10px;
+	margin-left:-390px;
+	background:url("../img/back_side.jpg") repeat-y;
+}
+
+#bg {
+	width: 770px;
+	background: url(../img/bg_conteudo.jpg) -10px -10px repeat-x;
+	height: 130px;
+	margin: -10px -5px -20px -5px;	
+}
+
+#topo {
+	background: url("../img/back_topo_interna.png") repeat-x;
+	height: 138px;
+	margin: -10px -5px 0px -5px;
+	overflow:hidden;
+	width: 770px;
+}
+
+#conteudo {
+	width: 425px;
+	padding: 0 13px 0 14px;
+	float: left;
+	margin: 0 0 10px 0;
+}
+
+.caminho, .caminhoMaior {
+	margin: -2px 0 10px 0;
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;
+	color: #666666;
+	width: 428px;
+	overflow: hidden;
+	border-bottom: 3px solid #0072bc;	
+}
+
+.caminhoMaior {
+	margin: -2px 0 0 0;
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;
+	color: #666666;
+	width: 585px;
+	overflow: hidden;
+}
+
+
+/*
+	TOPO
+*/
+
+#logoGov {
+	display: block;
+	top: 20px;
+	left: 15px;
+	position: absolute;
+}
+
+#dataDia_nomeImg {
+	width:750px; 
+	font-size:10px; 
+	font-family:Trebuchet MS; 
+	color:#000;
+	position:absolute;
+	height: 30px;
+	left:10px;
+	top:107px;
+}
+
+#dataDia_nomeImg .left { float:left; }
+
+#dataDia_nomeImg .right { float:right; }
+
+#govTitulo { position:absolute; left:280px; top:98px; }
+
+.localizacaoPaisagem { margin: 10px 0 0 10px; }
+
+
+/*
+	BUSCA
+*/
+
+#busca {
+	width:162px;
+	height:30px;
+	position:absolute;
+	right: 35px;
+	background:url(../img/back_busca.png) no-repeat;	
+}
+
+#busca *{ float:left; }
+
+#busca a{
+	font:normal 8px "Trebuchet MS", Verdana, Arial;
+	color:#666666;
+	padding:0 5px;
+	margin:5px 4px;
+	border-left:1px solid #666666;
+	line-height:1.2;
+	width:40px;
+}
+
+#busca a:hover{
+	color:#D9251D;
+	text-decoration:none;
+}
+
+.textinput{ padding: 3px 5px; }
+
+.textarea{
+	width:320px;
+	height:150px;
+}
+
+.textinput#valorBuscar{
+	border:none;
+	height:16px;
+	padding:4px 5px;
+	width:101px;
+	background:url("../img/inputBuscaPrincipal.gif") left top no-repeat;
+	margin:3px 0px 3px 15px;
+	font:normal 9px "Trebuchet MS", Verdana, Arial;
+	color:#666666;
+}
+
+.textinput#valorBuscar:hover { background-position:left bottom; }
+
+.buttonSubmit {
+	width:69px;
+	height:26px;
+	color:#FFF;
+	font-weight:bold;
+	padding:2px 5px;
+	background:url(../img/niceforms/button.gif) no-repeat left top;
+	cursor:pointer;
+	border:none;
+}
+
+.buttonSubmit:hover { background-position:left bottom; }
+
+.buttonSubmit#botaoBuscar{
+	width:15px;
+	height:15px;
+	margin:7px 0px 7px 5px;
+	background: url("../img/buttomBusca.png") left top no-repeat;
+	cursor:pointer;
+	border:none;
+}
+
+
+/*
+	PAISAGENS
+*/
+
+#randomImg { 
+	position:absolute; 
+	width:770px;
+	height:136px;
+	overflow:hidden;
+	margin: 0 0 -25px 0;
+}
+
+
+/*
+
+	PUBLICIDADE
+*/
+
+#boxBanner {
+	width: 420px;
+	height: 80px;
+	margin: 0 0 20px 0;
+}
+
+#banner {
+	position:relative;
+	top:-5px; 
+	background:#FFFFFF;
+	width:419px;
+	height:77px;
+	border: 1px solid #0072bc;
+	padding:3px 3px 0px 3px;
+	margin: 5px 0;
+}
+
+#banner img { margin: -2px 0 0 -2px; }
+
+#rodapeBanner { 
+	position: relative;
+	margin: -10px 0px 0px -1px; 
+	z-index:10000;
+}
+
+#rodapeBanner a { float:left; }
+
+#rodapeBanner a.activeSlide { 
+	background:#0072bc; 
+	border:2px solid #0072bc; 
+	color:#fff;
+}
+
+#rodapeBanner a {
+	font-family: "Trebuchet MS";
+	background:#99bfd8; 
+	border:2px solid #99bfd8;
+	padding: 2px 6px;
+	color:#000;
+	font-size:10px;
+	font-weight:bold;
+	margin:0 0px 0 1px;
+	cursor:pointer;
+}
+
+
+/*
+	MENU PRINCIPAL
+	menu = Ãrea do Menu Principal
+	mP = Propriedades do Menu principal
+*/
+
+#menu {
+	position:relative;
+	display:block;
+	width: 770px;
+	height:28px;
+	text-align: center; 
+	margin: 0 0 5px -5px;
+	background: url(../img/bg_menu_principal.png) repeat-x;
+	z-index: 1000000;
+}
+
+ul.menuh {
+	position:relative;
+	display:block;
+	width: 764px;
+	height:28px;
+	text-align: center; 
+	margin: 0 auto;
+	background: url(../img/bg_menu_principal.png) repeat-x;
+}
+
+ul.menuh li.subv {
+	font: bold 14px "Trebuchet MS";
+	text-transform: uppercase;
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	float:left;
+}
+
+ul.menuh ul.menuv {
+	display: none;
+	position: absolute;
+	margin: 0px;
+}
+
+/*
+ul.menuh ul.menuv ul {
+	left: 150px;
+}
+*/
+
+ul.menuh a {
+	display:block;
+	/*background-color: FFFFFF;*/
+	color: #999999;
+	text-decoration: none;
+	border-top: 3px solid #D9D9D9;
+	border-bottom: 1px solid #9C9C9C;
+	padding: 3px 18px;
+	background: url("../img/bg_seta_menu_off.gif") right no-repeat;
+}
+
+ul.menuh li a:hover {
+	color: #333333;
+	border-top: 3px solid #333333;
+	border-bottom: 1px solid #9C9C9C;
+	background: url("../img/bg_seta_menu_on.png") right no-repeat;	
+}
+
+/*
+ul.menuh a.seta {
+	background: transparent url(indicador-submenu-1.gif) right center no-repeat;
+}
+*/
+
+ul.menuv, ul.menuv ul {
+	/* border-left: 5px solid #737373; */
+	margin: 0 0 0 0px;
+	padding: 0;
+	width: 175px; /* Width of Menu Items */
+	text-align: left;
+	/*background-color: #FFFFFF;  IE6 Bug */
+	z-index: 10000;
+
+}
+
+ul.menuv li {
+	font-size: 11px;
+	font-weight: bold;
+	text-transform: none;
+	position: relative;
+	list-style: none;
+	border: 0px;
+	background: url("../img/bg_menu.png");
+	line-height: 20px;
+}
+
+ul.menuv li a {
+	display: block;
+	text-decoration: none;
+	border: 0px;
+	color: #fff;
+	background: url("../img/bg_menu.png") left no-repeat;
+					
+}
+
+/* Fix IE. Hide from IE Mac \*/
+* html ul.menuv li {
+	float: left;
+	height: 1%;
+}
+
+* ul.menuv li a {
+	height: 1%;
+}
+/* End */
+
+ul.menuv ul {
+	position: absolute;
+	z-index: 10000;
+	display: none;
+	left: 165px;
+	top: 2px;
+}
+
+ul.menuv li.submenu ul { display: none; }
+
+ul.menuv a.seta { background: transparent url(indicador-submenu-2.gif) right center no-repeat; }
+
+ul.menuv li a:hover {
+	display: block;
+	text-decoration: none;
+	border: 0px;
+	color: #FFCC00;
+	background: url(../img/bg_menu_selecionado.png);
+}
+
+
+/*
+	LATERAL ESQUERDA
+	lD = Ãrea lateral esquerda do site
+*/
+
+#lE {
+	margin: 13px 0 0 0;
+	width: 135px;
+	padding: 0 5px 5px 5px;
+	background: #FFFFFF; /* apenas para marcar Ã¡rea */
+	float: left;
+	background: url("../img/bg_lateral_esquerda_capa.gif") repeat-y; /* apenas para marcar Ã¡rea */
+}
+
+
+/*
+	LATERAL DIREITA
+	lD = Ãrea lateral direita do site
+*/
+
+#lD {
+	margin: 13px 20px 0 0;
+	width: 150px;
+	padding: 0 5px 5px 5px;
+	background: #FFFFFF; /* apenas para marcar Ã¡rea */
+	float: right;
+	background: url("../img/bg_lateral_direita.gif") repeat-y; /* apenas para marcar Ã¡rea */
+}
+
+
+/*
+	MENU SECUNDÃRIO 
+*/
+
+#menuSecundario{
+	margin: 0 0 15px 0;
+	padding: 5px;
+	background: url("../img/bg.jpg") repeat-x;
+	width: 125px;
+	border-top: 3px solid #0072bc;
+	overflow: hidden;
+}
+
+#menuSecundario dl{
+	padding: 0;
+	margin: 0;
+	font: 12px "Trebuchet MS", Verdana, Arial;
+	color: #333333;
+	list-style: none;
+}
+
+#menuSecundario dt{
+	line-height: 20px;
+	padding: 5px 2px;
+}
+
+#menuSecundario dt a{
+	padding: 0 5px;
+	display: block;
+	color: #333333;
+	background: url("../img/bg_menu_capa_off.gif") no-repeat;
+}
+
+#menuSecundario dt a:link{ background: url("../img/bg_menu_capa_off.gif") no-repeat; }
+
+#menuSecundario dt a:visited{ background: url("../img/bg_menu_capa_off.gif") no-repeat; }
+
+#menuSecundario dt a:hover{
+	color: #0072bc;
+	text-decoration:none;
+	background: url("../img/bg_menu_capa_on.gif") no-repeat;
+}
+
+#menuSecundario dt a:active { background: url("../img/bg_menu_capa_on.gif") no-repeat; }
+
+#menuSecundario dd{
+	width: 105px;
+	padding: 5px;
+}
+
+#menuSecundario dd ul li { margin: 0 10px 0 10px; }
+
+#menuSecundario dd ul li { line-height:20px; }
+
+#menuSecundario dd ul li a{
+	font: 10px "Trebuchet MS", Verdana, Arial;
+	color: #333333;
+	border: none;
+	line-height: 12px;
+	text-decoration: none;
+	display: block;
+}
+
+#menuSecundario dd ul li a:link{
+	border-bottom:1px solid #333333;
+	text-decoration: none;
+}
+
+#menuSecundario dd ul li a:visited{
+	color: #333333;
+	border-bottom:1px solid #333333;
+}
+
+#menuSecundario dd ul li a:hover{
+	color: #0072bc;
+	border-bottom:1px solid #0072bc;
+	font-weight: normal;
+}
+
+#menuSecundario dd ul li a:active{
+	color: #0072bc;
+	border-bottom:1px solid #0072bc;
+}
+
+
+/*
+	LINKS																	
+*/
+
+a { text-decoration:none; color:#666; }
+
+a:hover { text-decoration:underline; }
+
+#nDFDescricao a, #oN ul li a { color:#333333; }
+
+#oN ul li a: hover{ color:#0072bc; }
+
+#nDFTitulo a, #nDMTitulo a { color:#0072bc; }
+
+#nDTitulo a, #nDFCitacao a{ color:#000; }
+
+#nDTitulo a:hover, #nDDescricao a:hover, #nDFTitulo a:hover, #nDFDescricao a:hover { text-decoration:underline; }
+
+#nDFFoto:hover{ border:2px solid #0072bc; }
+
+.caminho a { color: #0072bc; }
+
+
+/*	
+	DESTAQUE
+	nD = NotÃ­cias Destaque
+*/
+
+#nD {
+	width: 415px;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	float: left;
+}
+
+#nDmaior {
+	width: 575px;
+	margin: 0 0 5px 0;
+	padding: 5px;
+	float: left;
+}
+
+#nD h3, #nDmaior h3, #boxProtocolo h3 {
+	font: bold 13px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: 5px;
+	font-style: italic;
+	text-align: justify;
+}
+
+.dataNoticia {
+	font: 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #666666; 
+	border-bottom: 1px #666666 dotted;
+	display: block;
+	margin: 5px 0;
+}
+	
+#nD li, #nDmaior li, #boxProtocolo li {
+	margin: 0 0 5px 5px;
+	padding: 0 0 0 5px;
+	font: 11px "Trebuchet MS", Tahoma, Arial, Verdana;
+	text-align: justify;	
+}
+
+#boxProtocolo li {
+	margin: 0 20px 5px 5px;
+	line-height: 150%;
+}
+
+
+#nD li.secretariaNome, #nDmaior li.secretariaNome {
+	font: bold 11px "Trebuchet MS", Tahoma, Arial, Verdana;
+	color: #0072bc;
+	border-bottom: 1px dotted #0072bc;
+	background: url(../img/bg_seta.gif) no-repeat;
+	padding-left: 20px;
+}
+
+#nD a, #nDmaior a, #boxProtocolo a { color: #0072bc; }
+
+#nD li, #boxProtocolo li {
+	background: url("../img/bg_seta_direita_off.gif") no-repeat;
+	padding-left: 15px;
+}
+
+#nD li a, #nDmaior li a, #boxProtocolo li a {
+	/* background: url(../img/bg_seta_direita.gif) no-repeat; */
+	color: #0072bc;
+}
+
+#nD ul, #nDmaior ul, #boxProtocolo ul { margin: 10px 0 0 10px; }
+
+#nD p, #nDmaior p, #boxProtocolo p { text-align: justify; }
+
+
+/*	
+	DESTAQUE COM FOTO
+	nDF = NotÃ­cias Destaque Foto
+*/
+
+#nDF {
+	width: 415px;
+	height:170px;
+	padding:0 5px;
+	margin: -15px 0 15px 0;
+	border-top: 3px solid #999999;
+	border-bottom: 1px solid #999999;
+	border-left: 1px solid #999999;
+	border-right: 1px solid #999999;
+	background: url("../img/bg_destaque.png") repeat-x bottom; 	
+}
+
+#nDFTitulo, #nDFDescricao, #nDFCitacao{
+	padding-left: 170px;
+	font-family: "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#nDFCredito{
+	margin-top: 5px;
+	font: 9px "Trebuchet MS", Tahoma, Arial, Helvetica, sans-serif;
+}
+
+#nDFFoto{
+	float: left;
+	width: 205px;
+	height: 141px;
+	border: 2px solid #999;
+	margin: 0 5px 0 0;
+}
+
+#nDFTitulo{
+	line-height: 115%;
+	font-weight: bold;
+	font-size: 15px;
+	color: #0072bc;
+}
+
+#nDFDescricao{
+	line-height:135%;
+	font-size: 11px;
+	color: #333333;
+	margin: 7px 0;
+}
+
+#nDFCitacao{
+	border-top: 1px solid #999;
+	font-weight: bold;
+	font-size: 10px;
+	margin-top: 5px;
+	padding-top: 3px;
+}
+
+
+/*	
+	DESTAQUES SECUNDARIOS
+	ns = NotÃ­cias Secundarias
+*/
+
+#nS {
+	float: right;
+	background: url("../img/bg_secundarias.png") no-repeat;
+	width: 94px;
+	height: 110px;
+	padding: 3px;
+	margin: 1px 5px 15px 0px;	
+	border-top: 3px solid #999999;
+}
+
+#nS2 {
+	float: left;
+	background: url("../img/bg_secundarias.png") no-repeat;
+	width: 94px;
+	height: 110px;
+	padding: 3px;
+	margin: 0 8px 15px 0;	
+	border-top: 3px solid #999999;
+}
+
+#nS h1, #nS2 h1 {
+	font: bolder 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc;
+	text-transform: uppercase;
+	margin: 3px 3px 3px 3px;
+}
+
+#nS p, #nS2 p {
+	font: bold 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #666666;
+}
+
+#nS a, #nS2 a {
+	text-decoration:none;
+	font: 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #666666;
+}
+
+#nS a:hover, #nS2 a:hover {
+	text-decoration: underline;
+	color: #0072bc;
+}
+
+
+/*
+	GOVERNO EM DESTAQUE
+	Bonus: Meio ambiente em destaque (EMPARN)
+	       Datanorte em Destaque (DATANORTE)
+		   Hemonorte em destaque (HEMONORTE)
+		   Cultura em Destaque (SEAC)
+		   SeguranÃ§a em Destaque (SESED)
+*/
+
+#hemonortedestaque,
+#governoDestaque,
+#meioambienteDestaque,
+#datanorteDestaque,
+#parceirosdocerest,
+#saudedestaque,
+#culturaemdestaque,
+#segurancadestaque{
+	padding: 5px;
+	background: #FFFFFF;
+	width: 125px;
+	border-top: 3px solid #0072bc;
+	font: 10px "Trebuchet MS", Verdana, Arial;
+}
+
+#governoDestaque h1 {
+	background: url("../img/governoDestaque.gif") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+
+#culturaemdestaque h1 {
+	background: url("../img/cultura_em_destaque.gif") no-repeat;
+	width: 130px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+	
+#segurancadestaque h1 {
+	background: url("../img/seguranca_em_destaque.gif") no-repeat;
+	width: 130px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+	
+#saudedestaque h1 {
+	background: url("../img/saudedestaque.gif") no-repeat;
+	width: 125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+
+#hemonortedestaque h1 {
+	background: url("../img/hemonortedestaque.gif") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+
+#meioambienteDestaque h1 {
+	background: url("../img/meioambienteDestaque.gif") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+	
+#datanorteDestaque h1 {
+	background: url("../img/datanorteDestaque.gif") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+
+#parceirosdocerest h1 {
+	background: url("../img/parceiros_cerest.gif") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;}
+
+#hemonortedestaque ul,
+#governoDestaque ul,
+#meioambienteDestaque ul,
+#datanorteDestaque ul,
+#parceirosdocerest ul,
+#saudedestaque ul,
+#culturaemdestaque ul,
+#segurancadestaque ul{
+	color:#333333;
+	list-style:none;
+}
+
+#hemonortedestaque ul li,
+#governoDestaque ul li,
+#meioambienteDestaque ul li,
+#datanorteDestaque ul li,
+#parceirosdocerest ul li,
+#saudedestaque ul li,
+#culturaemdestaque ul li,
+#segurancadestaque ul li{
+	line-height: 20px;
+	padding: 5px 2px;
+}
+
+#hemonortedestaque ul li a,
+#governoDestaque ul li a,
+#meioambienteDestaque ul li a,
+#datanorteDestaque ul li a,
+#parceirosdocerest ul li a,
+#saudedestaque ul li a,
+#culturaemdestaque ul li a,
+#segurancadestaque ul li a{
+	padding: 0 5px;
+	display: block;
+	color: #333333;
+	background: url("../img/bg_menu_capa_off.gif") no-repeat;
+}
+
+#hemonortedestaque ul li a:hover,
+#governoDestaque ul li a:hover,
+#meioambienteDestaque ul li a:hover,
+#datanorteDestaque ul li a:hover,
+#parceirosdocerest ul li a:hover,
+#saudedestaque ul li a:hover,
+#culturaemdestaque ul li a:hover,
+#segurancadestaque ul li a:hover{
+	color: #0072bc;
+	text-decoration:none;
+	background: url("../img/bg_menu_capa_on.gif") no-repeat;
+}
+
+
+/*
+	NAVEGUE PELO RN
+*/
+
+#navegueRN{
+	padding: 5px;
+	background: #FFFFFF;
+	width: 125px;
+	border-top: 3px solid #0072bc;
+	font: 10px "Trebuchet MS", Verdana, Arial;
+	margin: 10px 0 0 0;
+}
+
+#navegueRN h1 {
+	background: url("../img/navegueRN.gif") no-repeat;
+	width:82px;
+	height: 28px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;
+}
+
+#navegueRN img { text-align: center; }
+
+/*
+	NAVEGUE SALA SITUAÃ‡ÃƒO CEFOPE
+*/
+
+#navegueCefope{
+	padding: 5px;
+	background: #FFFFFF;
+	width: 125px;
+	border-top: 3px solid #0072bc;
+	font: 10px "Trebuchet MS", Verdana, Arial;
+	margin: 10px 0 0 0;
+}
+
+#navegueCefope h1 {
+	background: url("../img/saladesituacao_cefope.png") no-repeat;
+	width:82px;
+	height: 28px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;
+}
+
+#navegueCefope img { text-align: center; }
+
+
+
+
+/*
+	AGENDA DA GOVERNADORA
+*/
+
+#agenda {
+	width: 140px;
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	border-top: 3px solid #FF9900;
+	background: url("../img/bg_agenda.png") repeat-x;
+}
+
+#agenda h3 {
+	background: url("../img/agenda.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#agenda h4 {
+	text-align: center;
+	font: bold 11px  "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#agenda a {
+	text-decoration:none;
+	font: 9px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #FF6600;
+}
+
+#agenda p {
+	text-decoration:none;
+	font: 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#agenda a:hover { text-decoration: underline; }
+
+
+/*
+	SERVIÃ‡OS ONLINE
+*/
+
+#servicosOnline,
+#editaisepremios{
+	width: 140px;
+	min-height: 210px;
+	background: url(../img/bg_servicosOnline.jpg) no-repeat top;		
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	border-top: 3px solid #0072bc;
+	font: 11px "Trebuchet MS", Verdana, Arial;
+	color:#333333;
+}
+
+#servicosOnline h1{
+	background: url("../img/servicosOnline.gif") no-repeat;
+	width:79px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#editaisepremios h1{
+	background: url("../img/editais_e_premios.gif") no-repeat;
+	width: 130px;
+	height: 31px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#editaisepremios h4{
+	font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+	font-style: italic;
+	font-weight: bold;
+	margin: 10px 0;
+	color: #0072bc;
+}
+
+#servicosOnline ul,
+#editaisepremios ul{
+	color:#333333;
+	list-style:none;
+	font-size: 10px;
+}
+
+#servicosOnline ul li,
+#editaisepremios ul li{
+	line-height: 20px;
+	padding: 4px 2px;
+}
+
+#servicosOnline ul li a,
+#editaisepremios ul li a{
+	padding: 0 5px;
+	display: block;
+	color: #333333;
+	background: url("../img/bg_servico.png") no-repeat;
+}
+
+#servicosOnline ul li a:hover,
+#editaisepremios ul li a hover{
+	color: #0072bc;
+	text-decoration:none;
+	background: url("../img/bg_servico_on.png") no-repeat;
+}
+
+#servicosOnline ul li a:hover,
+#patrocinadores ul li a hover{
+	color: #0072bc;
+	text-decoration:none;
+	background: url("../img/bg_servico_on.png") no-repeat;
+}
+
+/*
+	AÃ‡Ã•ES DE GOVERNO
+*/
+
+#acoesGoverno{
+	width: 140px;
+	background: url(../img/bg_box_direita.jpg) no-repeat top;		
+	margin: 15px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	border-top: 3px solid #0072bc;
+	font: 11px "Trebuchet MS", Verdana, Arial;
+	color:#333333;
+}
+
+#acoesGoverno h3 {
+	background: url("../img/acoesGoverno.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#acoesGoverno h2 {
+	font: bold 13px "Trebuchet MS", Verdana, Arial;
+	color: #333333;
+}
+
+#acoesGoverno h4 {
+	font: bold 12px "Trebuchet MS", Verdana, Arial;
+	color: #0072bc;
+	text-align: center;
+}
+
+.link {
+	text-decoration:none;
+	font: 9px "Trebuchet MS", Verdana, Arial;
+	color: #0072bc;
+}
+
+#acoesGoverno a:hover { text-decoration: underline; }
+
+
+/*
+	FALE COM O SECRETÃRIO
+*/
+
+#faleComSecretario, #faleComSecretaria {
+	width:140px;
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	background: url("../img/bg_box_direita.jpg") no-repeat top;
+	border-top: 3px solid #0072bc;
+}
+
+#faleComSecretario h1 {
+	background: url("../img/falecomsecretario.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#faleConosco h1 {
+	background: url("../img/faleconosco.png") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#faleComSecretaria h1 {
+	background: url("../img/falecomsecretaria.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+
+/*
+	Twitter
+*/
+
+#twitterSearh, #twitter {
+	width:140px;
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	background: url("../img/bg_box_direita.jpg") no-repeat top;
+	border-top:3px solid #0072bc;
+}
+
+#twitterSearh h1, #twitter h1 {
+	background: url("../img/twitter_searh.png") no-repeat;
+	width:130px;
+	height: 128px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+
+#twitterSAPE, #twitter {
+	width:140px;
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	background: url("../img/bg_box_direita.jpg") no-repeat top;
+	border-top:3px solid #0072bc;
+}
+
+#twitterSAPE h1, #twitter h1 {
+	background: url("../img/twitter_SAPE.png") no-repeat;
+	width:130px;
+	height: 128px;
+	margin: 10px;
+	text-indent: -2000px;
+}
+/*	
+	OUTRAS NOTÃCIAS
+	oN = Outras NotÃ­cias
+*/
+
+#oN {
+	float:left;
+	width:425px;
+}
+
+#oN h3 {
+	font: bold 13px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: 5px;
+	font-style: italic;
+	border-bottom: 1px solid #0072bc;
+}
+
+#nD h4 {
+	font: bold 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: 5px;
+	font-style: italic;
+}
+
+#nD h2, #nDmaior h2 {
+	font: bold 15px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: -15px 5px 15px 5px;
+	font-style: italic;
+	border-bottom: 1px dotted #0072bc;
+}
+
+#nDmaior h2 { margin: -5px 5px 15px 5px; }
+
+#oN #oNTitulo{
+	font:bold 12px "Trebuchet MS", Verdana, Arial;
+	/* border-top:1px solid #ccc; */
+	padding: 5px 0;
+	margin-left: 8px;
+	width: 415px;
+}
+
+#oN ul{
+	list-style:none;
+	padding: 0;
+	margin: 0 0 0 5px;
+	width: 415px;
+}
+
+#oN ul li{
+	font:11px "Trebuchet MS", Verdana, Arial;
+	color:#666;
+	padding: 0 5px 0 0;
+	background: url(../img/bg_seta_direita_off.gif) no-repeat;	
+}
+
+#oN ul li a { font:11px "Trebuchet MS", Verdana, Arial; }
+
+#oN ul li#oNPar{
+	background-image: url(../img/bg_seta_direita_off.gif) no-repeat;	
+	padding-left: 15px;
+	background-color: #EFEFEF;
+	border-top: 3px solid #EFEFEF;
+	border-bottom: 3px solid #EFEFEF;
+}
+
+#oN ul li#oNImpar{
+	padding: 0 0 0 15px;
+	border-top: 3px solid #FFFFFF;
+	border-bottom: 3px solid #FFFFFF;
+}
+
+#oN #oNMNoticias{
+	font: 10px "Trebuchet MS", Verdana, Arial;
+	text-decoration: none;
+	text-align: right;
+	padding-top: 4px;
+	margin: 10px 10px 0 0;
+}
+
+#oN #oNMNoticias a { color: #666666; }
+
+#oN #oNMNoticias a:hover {
+	color: #0072bc;
+	text-decoration: none;
+}
+
+#nD.linkPreto a { color: #000000; }
+
+.fonte10px { font-size: 10px; }
+
+.negrito10px {
+	font-size: 10px;
+	font-weight: bold;
+}
+
+.laranjaNegrito {
+	font-weight: bold;
+	color: #FF6600;
+}
+.laranjaClaro { color: #FFCC00; }
+
+.dataConteudo {
+	font: 10px "Trebuchet MS", Verdana, Arial;
+	color: #000000;
+}
+
+.vermelhoNegrito {
+	font-weight: bold;
+	color: #0072bc;
+}
+
+.diaAnterior {
+	margin: 15px 0 0 0;
+	display: block;
+	font: 11px "Trebuchet MS", Verdana, Arial;
+	color: #CCCCCC;
+	border-top: 1px dotted #CCCCCC;
+	text-decoration: none;
+}
+
+.diaAnterior a:hover { text-decoration: underline; }
+
+
+/*
+	RODAPE
+*/
+
+#rodape {
+	background: url("../img/bg_rodape.png") repeat-x;
+	width:760px;
+	height: 74px;
+	margin: 25px 0px -10px -5px;
+	padding: 5px;
+	text-align: center;
+}
+
+#rodape p {
+	font: 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #000;
+}
+
+#rodape a { color: #000; }
+
+#rodape img {
+	margin: 5px;
+	text-align: center;
+}
+
+#noticiaFoto {
+	float: left;
+	margin: 5px;
+	padding: 5px;
+	border-bottom: 1px dotted #999999;
+	border-right: 1px dotted #999999;
+	background: url("../img/bg_legenda.png") repeat-x bottom;			
+}
+
+#noticiaFoto img {
+	border: 1px solid #999999;
+	text-align: center;
+}
+
+#noticiaFoto h5 {
+	margin-left: 5px;
+	margin-top: -5px;
+	font: 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#noticiaFoto h6 {
+	width: 200px;
+	margin: 5px 5px -2px 5px;
+	font: bold 10px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#formContato {
+	width: 400px;
+	margin: 20px 0 0 0;
+	padding: 10px;
+	padding: 10px 0px 10px 10px;	
+	overflow: hidden;
+	font: bold 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#nD h3.secretariaNome, #nDmaior h3.secretariaNome {
+	font: bold italic 13px "Trebuchet MS", Tahoma, Arial, Verdana;
+	color: #0072bc;
+	border-bottom: 1px dotted #0072bc;
+	background: url(../img/bg_seta_menor.gif) no-repeat;
+	padding-left: 20px;
+	margin: 20px 0 5px 5px;
+	width: 385px;
+}
+
+#nD h3.dataAgenda, #nDmaior h3.dataAgenda {
+	font: bold 12px "Trebuchet MS", Tahoma, Arial, Verdana;
+	color: #333333;
+	border-bottom: 1px dotted #333333;
+	background: url(../img/bg_seta_menor_off.gif) no-repeat;
+	padding-left: 20px;
+	margin: 20px 0 5px 5px;
+	width: 385px;	
+}
+
+.formLicitacao { font: "Trebuchet MS", Tahoma, Arial; }
+
+td { font: 10px "Trebuchet MS", Tahoma, Arial, Verdana; }
+
+.alinhaEsquerda {float: left}
+
+.alinhaDireita {float: right}
+
+.boxDescritivo {
+	width: 185px;
+	background: #F5F5F5;
+	color: #000000;
+	font: 10px 'Trebuchet MS';
+	margin: 5px 0 0 0;
+	padding: 5px 0 5px 5px;
+}
+
+.boxDescritivoLegenda {
+	width: 185px;
+	color: #000000;
+	font: 10px 'Trebuchet MS';
+	margin: 5px 0 0 0;
+	padding: 5px 0 5px 5px;
+}
+
+#boxDetalhamentoAcao {
+	float: left;
+	width: 160px;
+	margin: 0 10px 10px 0;
+	padding: 0 5px 5px 5px;
+	background: url("../img/bg_detalhamento_acao.gif") repeat-y;
+}
+
+.nomeAcao {
+	font: bold 12px 'Trebuchet MS', Tahoma, Arial;
+	color: #333333;
+}
+
+.imagemAcao {
+	float: left;
+	border: 5px solid #E5E5E5;
+	margin: 0 5px 5px 5px;
+}
+
+.boxDescritivoAcao {
+	width: 145px;
+	background: #F5F5F5;
+	color: #000000;
+	font: 10px 'Trebuchet MS';
+	margin: 2px 0 0 5px;
+	padding: 5px 0 5px 5px;
+}
+
+.boxDescritivoLegendaAcao {
+	width: 145x;
+	color: #000000;
+	font: 10px 'Trebuchet MS';
+	margin: 2px 0 0 5px;
+	padding: 5px 0 5px 5px;
+}
+
+#boxResumoAcao {
+	float: left;
+	width: 140px;
+	margin: 0 3px 0 0;
+	padding: 0;
+}
+
+#boxResumoAcao img { border: 1px solid #eee; }
+
+#boxResumoAcao p { font: 10px 'Trebuchet MS'; }
+
+#nomeAcaoResumo {
+	width:142px; 
+	font:bold 10px 'Trebuchet MS'; 
+	color:#FFFFFF;
+	height: 18px;
+	margin: -22px 0 0 -2px;
+	background: url(../img/transp_resumo_acao.png) repeat-x;
+}
+
+.bgResumoAcao {
+	background: url(../img/bg_acao_direita.png) no-repeat;
+	margin: 0 0 0 -2px;
+}
+
+u { text-decoration: underline; }
+
+#tamanhoFonte {
+	text-align: right;
+	margin: 0 5px 0 0;
+	width: 1U00px;
+}
+
+
+/*
+	TÃTULOS PARA O TOPO DO CONTEÃšDO DAS PÃGINAS
+*/
+
+h1.instituicao, h1.jornadaPedagogica, h1.estrutura, h1.imprensa, h1.programas, h1.servicos, h1.contato, h1.busca, h1.eventos {
+	background: url("../img/topo_instituicao.png") no-repeat;
+	width:420px;
+	height: 97px;
+	margin: -15px 0 -35px 3px;
+	text-indent: -2000px;
+}
+
+h1.jornadaPedagogica {
+	background: url("../../seec/web/img/topo_jornada_pedagogica.png") no-repeat;
+}
+
+h1.estrutura {
+	background: url("../img/topo_estrutura.png") no-repeat;
+}
+
+h1.imprensa {
+	background: url("../img/topo_imprensa.png") no-repeat;
+}
+
+h1.programas {
+	background: url("../img/topo_programas.png") no-repeat;
+}
+
+h1.servicos {
+	background: url("../img/topo_servicos.png") no-repeat;
+}
+
+h1.contato {
+	background: url("../img/topo_contato.png") no-repeat;
+}
+
+h1.busca {
+	background: url("../img/topo_busca.png") no-repeat;
+}
+
+h1.eventos {
+	background: url("../img/topo_eventos.png") no-repeat;
+}
+
+
+/* 
+	TABELAS PARA TELEFONES 
+*/
+
+table.tabelaTelefones {
+	width: 410px;
+	padding: 3px;
+	margin: 3px;
+
+}
+
+td.tabelaTelefones {
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;
+	text-transform: uppercase;
+	padding: 5px;
+	text-align: left;
+}
+
+td.tabelaTelefonesCentralizar { text-align: center; }
+
+tr.tabelaTelefones {
+	background: #0072bc;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	text-align: center;
+	padding: 5px 8px;
+	height: 18px;
+}
+
+
+/* 
+	TABELAS PARA PROCESSOS 
+*/
+
+table.tabelaProcessos {
+	width: 560px;
+	padding: 5px;
+	margin: 5px 5px 5px 10px;
+	text-align: center;
+}
+
+td.tabelaProcessos {
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;
+	text-transform: uppercase;
+	padding: 5px;
+}
+
+tr.tabelaProcessos {
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;
+	text-align: center;
+	padding: 5px 8px;
+	height: 18px;
+}
+
+table {
+	width: 390px;
+	padding: 5px;
+	font: 11px "Trebuchet MS", Tahoma, Arial, Verdana;
+	border: 0;
+	margin: 10px 0;
+}
+
+td {
+	padding: 5px;
+	text-align: center;
+	border: 1px solid #999999;
+}
+
+tr.titulo {
+	background-color: #e5e5e5;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#boxAplicativo {
+	width: 720px;
+	padding: 10px;
+	text-align: center;
+}
+
+#boxAplicativo p {
+	text-align: center;
+	font: 13px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+.boxAplicativoMensagem {
+	width: 720px;
+	padding: 10px;
+	text-align: center;
+	font: 13px "Trebuchet MS", Tahoma, Arial, Verdana;	
+	background:  #FECB9C;
+	border: 2px solid #FDA657;
+}
+
+.botao {
+	text-align: center;
+	font: bold 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#boxAplicativo table {
+	width: 700px;
+	padding: 5px;
+	margin: 5px 0 5px 20px;
+	text-align: center;
+	border: 2px solid #E6E6E6;
+}
+
+#boxAplicativo table td {
+	padding: 15px;
+	background: #F8F8F8;
+	text-align: left;
+	border: none;
+	font: bold 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#topoAplicativo {
+	background: url("../img/back_topo_interna.png") repeat-x;
+	height: 105px;
+	margin: -10px -5px 0px -5px;
+	overflow:hidden;
+	width: 770px;
+}
+
+#randomImgAplicativo { 
+	position:absolute; 
+	width:770px;
+	height:100px;
+	overflow:hidden;
+	margin: 0 0 -25px 0;
+}
+
+
+/*
+	PROTOCOLO GERAL DO ESTADO		
+*/
+
+#boxProtocolo {
+	width: 720px;
+	padding: 10px;
+	text-align: center;
+}
+
+#boxProtocolo p {
+	text-align: left;
+	font: 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#boxProtocolo td p {
+	text-align: center;
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+.boxProtocoloMensagem {
+	width: 720px;
+	padding: 10px;
+	text-align: center;
+	font: 13px "Trebuchet MS", Tahoma, Arial, Verdana;	
+	background:  #FECB9C;
+	border: 2px solid #FDA657;
+}
+
+.botao {
+	text-align: center;
+	font: bold 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#boxProtocolo table {
+	width: 700px;
+	padding: 5px;
+	margin: 5px 0 5px 20px;
+	text-align: center;
+}
+
+#boxProtocolo table td {
+	padding: 5px;
+	text-align: left;
+	border: none;
+	font: bold 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#topoProtocolo {
+	background: url("../img/back_topo_interna.png") repeat-x;
+	height: 105px;
+	margin: -10px -5px 0px -5px;
+	overflow:hidden;
+	width: 770px;
+}
+
+#randomImgProtocolo { 
+	position:absolute; 
+	width:770px;
+	height:100px;
+	overflow:hidden;
+	margin: 0 0 -25px 0;
+}
+
+#boxProtocolo a { color: #0072bc; }
+
+
+/* 
+	LICITAÃ‡Ã•ES
+*/
+
+#boxLicitacoes {
+	width: 530px;
+	float: right;
+	margin: 0 10px 0 0px;
+}
+
+#boxLicitacoes p { font: 11px "Trebuchet MS", Tahoma, Arial, Verdana; }
+
+#boxLicitacoes td p { font: 11px "Trebuchet MS", Tahoma, Arial, Verdana; }
+
+.boxLicitacoesMensagem {
+	width: 520px;
+	padding: 10px;
+	text-align: center;
+	font: 12px "Trebuchet MS", Tahoma, Arial, Verdana;	
+	background:  #FECB9C;
+	border: 2px solid #FDA657;
+}
+
+#boxLicitacoes table {
+	width: 500px;
+	padding: 5px;
+	margin: 5px 0 5px 5px;
+}
+
+#boxLicitacoes table td {
+	padding: 5px;
+	text-align: left;
+	border: none;
+	font: 10px "Trebuchet MS", Tahoma, Arial, Verdana;	
+}
+
+#boxLicitacoes a { color: #0072bc; }
+
+tr.tituloTabelaLicitacoes {
+	background: #0072bc;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	border-bottom: #000000 1px dotted;
+	text-align: center;
+	font-size: 13px;
+}
+
+td img {
+	float: left;
+	margin: 2px;
+	/*
+	margin: 5px;
+	border: 5px solid #E5E5E5;
+	*/
+}
+
+tr.tituloTabelaLicitacoes {
+	background: #0072bc;
+	color: #FFFFFF;
+	text-transform: uppercase;
+	border-bottom: #000000 1px dotted;
+	text-align: center;
+}
+
+td.licitacoes {
+/*	padding: 5px 0 5px 0;	*/
+	line-height: 18px;
+	border: 0;	
+	text-align: center;
+}
+
+td.licitacoes img {
+	margin: 0;
+	border: 0;	
+	text-align: center;
+}
+
+#bgFinal {
+	background: url("../img/bg_final_pagina.png") repeat-x;
+	background-position: bottom;
+	height: 5px;	
+}
+
+#boxLogin {
+	width: 340px;
+	margin: 0 auto;
+	padding: 5px;
+	background: url("../img/back_side_login.jpg") top repeat-y;
+	text-align: center;
+}
+
+#boxLogin h2 {
+	font: bold 15px "Trebuchet MS", Tahoma, Verdana, Arial;
+	text-transform: uppercase;
+	line-height: 115%;
+	margin: -95px 0 5px 0;
+	color: #0072bc;
+	text-align: center;
+}
+
+#boxLogin h3 {
+	font: bold 12px "Trebuchet MS", Tahoma, Verdana, Arial;
+	text-transform: uppercase;	
+	line-height: 115%;
+	margin: 5px 0 15px 0;
+	color: #0072bc;
+	text-align: center;
+}
+
+.formLogin {
+	width: 300px;
+	padding: 10px;
+	font: bold 14px "Trebuchet MS", Tahoma, Verdana, Arial;
+	text-align: left;
+	line-height: 115%;
+	margin: 0 auto;
+	color: #0072bc;
+}
+
+#boxLoginTopo {
+	width: 340px;
+	margin: 0 auto;
+	height: 125px;
+	background: url("../img/topo_login_licitacoes.png") top no-repeat;
+	margin: -5px 0px 10px 0px;
+}
+
+#boxLoginRodape {
+	width: 340px;
+	margin: 0 auto;
+	height: 31px;
+	background: url("../img/bg_rodape_login.png") bottom repeat-x;
+	margin: 25px 0px -5px 0px;
+}
+
+fieldset {
+	border: none;
+	line-height: 115%;
+}
+
+form fieldset label {
+	width: 280px;
+	font: bold 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+	line-height: 115%;
+	display: block;
+	padding: 3px;
+	height: 30px;
+	float: left;
+}
+
+form fieldset label input {
+	float: right;
+	margin: -20px 20px 0 0;
+	_margin: -13px 20px 0 0;	
+}
+
+form fieldset label input.botao {
+	float: right;
+	margin: 0 0 0 0;	
+}
+
+h3.tituloLogin {
+	width: 280px;
+	font: bold 12px "Trebuchet MS", Tahoma, Verdana, Arial;
+	text-transform: uppercase;
+	text-align: center;
+	color: #000000;
+}
+
+h1.licitacoes {
+	background: url("../img/topo_licitacoes_740px.png") no-repeat;
+	width:740px;
+	height: 97px;
+	margin: -5px 0 -35px 0;
+	text-indent: -2000px;
+	border-top: 3px solid #0072bc;
+}
+
+#boxProtocolo h2 {
+	font: bold 15px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: -15px 5px 15px 5px;
+	font-style: italic;
+	border-bottom: 1px dotted #0072bc;
+	text-align: left;
+}
+
+
+/* 
+	FORMULARIOS DE CADASTRO 
+*/
+
+#formContatoLicitacoes {
+	width: 500px;
+	overflow: hidden;
+	font: bold 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#formContatoLicitacoes legend {
+	width: 480px;
+	margin: 10px 0 10px 0;
+	padding: 5px;
+	overflow: hidden;
+	font: bold 13px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #555555;
+	border-top: 2px solid #C7C7C7;
+	background: #F4F4F4;
+}
+
+/* HACK PARA CORRIGIR O MARGIN-BOTTOM */
+html>body #formContatoLicitacoes legend { margin-bottom: 0px; }
+
+#formContatoLicitacoes label{
+	display: block;
+	width: 200px;
+	float: left;
+	color: #000;
+	margin: 5px 5px 5px 15px;
+	border-bottom: 1px solid #E0E0E0;
+	text-align: left;
+}
+
+#formContatoLicitacoes input, select {
+	float: left;
+	font: bold 12px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #555555;
+	padding: 0 10px;
+	margin: 5px;
+}
+
+#formContatoLicitacoes select {
+	width: 225px;
+	border: none;
+	margin-bottom: 10px;
+	padding: 0 10px;
+}
+
+#formContatoLicitacoes fieldset{ width: 480px; }
+
+
+/* 
+	FORMULARIOS
+*/
+
+#formPadrao {
+	width: 410px;
+	overflow: hidden;
+	font: bold 11px "Trebuchet MS", Tahoma, Verdana, Arial;
+}
+
+#formPadrao legend {
+	width: 400px;
+	margin: 10px 0 10px 0;
+	padding: 5px;
+	overflow: hidden;
+	font: bold 13px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #555555;
+	border-top: 2px solid #C7C7C7;
+	background: #F4F4F4;
+}
+
+/* HACK PARA CORRIGIR O MARGIN-BOTTOM */
+html>body #formPadrao legend { margin-bottom: 0px; }
+
+#formPadrao label{
+	display: block;
+	width: 130px;
+	float: left;
+	color: #000;
+	margin: 5px 5px 5px 15px;
+	border-bottom: 1px solid #E0E0E0;
+	text-align: left;
+}
+
+#formPadrao input, select, textarea {
+	float: left;
+	font: bold 12px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #555555;
+	padding: 0 10px;
+	margin: 5px;
+}
+
+
+#formPadrao textarea {
+	width: 190px;
+	padding: 0 10px;
+	margin: 5px;
+	
+}
+
+#formPadrao select {
+	width: 225px;
+	border: none;
+	margin-bottom: 10px;
+	padding: 0 10px;
+}
+
+#formPadrao fieldset { width: 400px; }
+
+
+/* 
+	AUMENTAR E DIMINUIR FONTE 
+*/
+
+#tamanhoFonte a img.bordaBotao { background: #EFEFEF; }
+
+#tamanhoFonte a:hover img.bordaBotao  { background: #d8eff6; }
+
+p a.bordaBotao {
+	background: #EFEFEF;
+	padding: 5px;
+	text-decoration: none;
+	margin: 0 5px;
+}
+
+a.bordaBotao:hover  {
+	background: #d8eff6;
+	padding: 5px;	
+	text-decoration: none;
+}
+
+#boxAplicativo h2, #boxAplicativo h3 {
+	font: bold 15px "Trebuchet MS", Tahoma, Verdana, Arial;
+	color: #0072bc; 
+	margin: 5px;
+	text-align: center;
+}
+
+/*
+	CATALOGO para a EG
+*/
+
+#catalogo, #faleComEscola, #faleComPnage, #faleComEmparn,
+#falecomapresidente, #falecompresidente, #faleComDiretor,
+#falecomCerest, #falecomcotic{
+	width:140px;
+	margin: 0px 0px 15px 0px;
+	padding: 5px 5px 5px 5px;
+	background: url("../img/bg_box_direita.jpg") no-repeat top;
+	border-top:3px solid #0072bc;}
+
+/*
+	FALE COM A ESCOLA DE GOVERNO
+*/
+
+#catalogo h3 {
+	background: url("../img/cursos.png") no-repeat;
+	width:130px;
+	height: 50px;
+	margin: 10px;
+	text-indent: -2000px;}
+
+#falecomcotic h1 {
+	background: url("../img/falecomcotic.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+
+#faleComEscola h3 {
+	background: url("../img/faleComEscola.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+	
+#faleComPnage h3 {
+	background: url("../img/faleComPnage.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+	
+#faleComEmparn h1, #faleComEmparn h3 {
+	background: url("../img/faleComEmparn.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+
+#faleComPm h1, #faleComPm h3 {
+	background: url("../img/faleComPm.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+	
+#faleComCerest h3 {
+	background: url("../img/falecomcerest.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+
+#faleComaPresidente h3, #faleComaPresidente h1 {
+	background: url("../img/falecomapresidente.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+
+#faleComPresidente h3, #faleComPresidente h1 {
+	background: url("../img/falecompresidente.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+	
+#faleComDiretor h3, #faleComDiretor h1{
+	background: url("../img/falecomdiretor.gif") no-repeat;
+	width:130px;
+	height: 28px;
+	margin: 10px;
+	text-indent: -2000px;}
+	
+
+/*
+	CONTADOR
+*/
+
+#visitas{
+	font: 12px "Trebuchet MS", Verdana, Arial;
+	color:#333333;
+}
+
+
+/* LIGHTBOX */
+
+#nD #gallery ol li, #nD #gallery ul li {
+	list-style-type: none;
+	float: left;
+}
+#nD #gallery li {
+	background: none;
+	padding-left: 0px;
+	padding-bottom: 0px;	
+	margin: 8px;
+	float: left;
+}
+#nD #gallery li img {
+	border: 4px solid #E8E8E8;
+}
+
+#nD table caption {
+	background-color: #EFEFEF;
+	padding: 5px;
+	text-align: center;
+	border-top: 3px solid #C7C7C7;
+	font-size: 12px;
+	font-weight: bold;
+}
+
+/*
+	Links Ãšteis
+*/
+
+#linksuteis{
+	padding: 5px;
+	background: #FFFFFF;
+	width: 125px;
+	border-top: 3px solid #0072bc;
+	font: 10px "Trebuchet MS", Verdana, Arial;
+}
+
+#linksuteis h1 {
+	background: url("../img/links_uteis.png") no-repeat;
+	width:125px;
+	height: 31px;
+	margin: 10px 0 10px 1px;
+	text-indent: -9000px;
+}
+
+#linksuteis ul{
+	color:#333333;
+	list-style:none;
+}
+
+#linksuteis ul li{
+	line-height: 20px;
+	padding: 5px 2px;
+}
+
+#linksuteis ul li a{
+	padding: 0 5px;
+	display: block;
+	color: #333333;
+	background: url("../img/bg_menu_capa_off.gif") no-repeat;
+}
+
+#linksuteis dl{
+text-align: center;
+}
+
+#linksuteis ul li a:hover{
+	color: #0072bc;
+	text-decoration:none;
+	background: url("../img/bg_menu_capa_on.gif") no-repeat;
+}
