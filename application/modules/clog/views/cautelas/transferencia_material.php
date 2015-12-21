@@ -13,7 +13,7 @@
 					<?php echo form_open('clog/cautelas/transferir_material', array('role' => 'form', 'class' => 'form-horizontal')); ?>
 						<!-- Recebedor -->
 						<div class="form-group">
-							<label for="search-militar-matricula" class="col-sm-2 control-label">Recebedor</label>
+							<label for="search-militar-matricula" class="col-sm-3 control-label">Matrícula do Recebedor</label>
 							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
 								<input type="text" rel="matricula" class="form-control" id="search-militar-matricula" name="matricula" placeholder="Matrícula" title="Matrícula do recebedor" required>
 								<input type="hidden" class="form-control input-xs" id="chefe_militares_id_hidden" name="chefe_militares_id" value="<?php ?>">
@@ -24,7 +24,7 @@
 						</div>
 						<!-- Estoque origem -->
 						<div class="form-group">
-							<label for="estoque_origem" class="col-sm-2 control-label">Origem</label>
+							<label for="estoque_origem" class="col-sm-3 control-label">Almoxarifado de Origem</label>
 							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
 								<select name="estoque_origem" class="form-control" id="estoque_origem" title="Estoque de origem do material" required>
 									<option value="0">Selecione</option>
@@ -39,7 +39,7 @@
 						</div>
 						<!-- Estoque destino -->
 						<div class="form-group">
-							<label for="estoque_destino" class="col-sm-2 control-label">Destino</label>
+							<label for="estoque_destino" class="col-sm-3 control-label">Setor Destino</label>
 							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
 								<select name="estoque_destino" class="form-control" id="estoque_destino" title="Estoque destino do material" required>
 									<option value="0">Selecione</option>
@@ -55,7 +55,7 @@
 						</div>
 						<!-- Data da Saída -->
 						<div class="form-group">
-							<label for="data_saida" class="col-sm-2 control-label">Data de saída</label>
+							<label for="data_saida" class="col-sm-3 control-label">Data de saída</label>
 							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
 								<div class="input-group">
 									<span id="calendar-add-on" class="glyphicon glyphicon-calendar input-group-addon" aria-hidden="true"></span>

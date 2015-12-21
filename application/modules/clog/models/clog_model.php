@@ -318,6 +318,17 @@ class Clog_model extends CI_Model {
 		return $query;
 	}
 
+	public function getSalasSetor($superior_id) {
+		$tbl = "lotacoes";
+		$filters = array(
+			'sala' => 1,
+			'superior_id' => $superior_id
+		);
+		$this->db->where($filters);
+		$query = $this->db->get($tbl);
+		return $query;
+	}
+
 	public function getEstoques() {
 		$sql = "SELECT DISTINCT
 							estoques.lotacoes_id,

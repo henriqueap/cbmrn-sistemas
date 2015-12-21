@@ -62,6 +62,18 @@
 									<h6>* Os tombos (ex: 1000) ou intervalos (ex: 1000-1010) devem ser separados por vírgula</h6>
 								</div>
 							</div>
+							<!-- Cor dos Tombos -->
+							<div class="form-group">
+								<label for="tipo_tombo" class="col-sm-2 control-label">Tipo do Tombo</label>
+								<div class="col-sm-12 col-md-6 col-lg-6 col-xs-12">
+									<select name="tipo_tombo" class="form-control" id="tipo_tombo" title="Cor do tipo do tombo">
+										<option value="">Cores</option>
+										<option value="vermelho">Vermelho</option>
+										<option value="amarelo">Amarelo</option>
+										<option value="azul">Azul</option>
+									</select>
+								</div>
+							</div>
 							<!-- Botão salvar -->
 							<div class="form-group">
 								<div class="col-sm-12 col-md-6 col-lg-6 col-xs-12 col-sm-offset-2">
@@ -72,5 +84,40 @@
 					</div>
 				</div>
 			</div> <!-- .col-* -->
+	</div> <!--/.row-->
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		<h1>Últimas Entradas Avulsas </h1>
+	</div>
+	<hr>
+	<div class="row">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+			<table class="table table-hover table-bordered table-condensed">
+				<thead>
+					<tr>
+						<th>Ordem</th>						
+						<th>Produto</th>
+						<th>Tipo</th>
+						<th>Quantidade</th>
+						<th>Incluído por</th>
+						<th>Data</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php 
+					if (! is_bool($entradas)) {
+						foreach($entradas->result() as $entrada): ?>
+							<tr>
+								<td><?php echo $entrada->id; ?></td>
+								<td><?php echo $entrada->produto; ?></td>
+								<td><?php echo "Material ".(($entrada->consumo == 0) ? 'de Consumo' : ' Permanente'); ?></td>
+								<td><?php echo $entrada->quantidade; ?></td>
+								<td><?php echo $entrada->militar; ?></td>
+								<td><?php echo $entrada->data_inclusao; ?></td>
+							</tr>
+						<?php endforeach; 
+					} ?>
+				</tbody>
+			</table>
+		</div> <!-- .col-* -->
 	</div> <!--/.row-->
 </div> <!--/.container-->

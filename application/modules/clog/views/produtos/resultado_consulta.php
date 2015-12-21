@@ -12,7 +12,7 @@
 		<tr>
 			<td><?php echo $consulta->marcas; ?></td>
 			<td><?php echo $consulta->grupo_produtos; ?></td>
-			<td><?php echo $consulta->nome_produtos; ?></td>
+			<td><?php echo strtoupper($consulta->nome_produtos); ?></td>
 			<td>
 			<a href="<?= base_url('index.php/clog/produtos/detalheProdutos').'/'.$consulta->id ?>" class="btn btn-default btn-xs" id="detalhe-produtos">
       			<span class="glyphicon glyphicon-search"></span> Detalhar

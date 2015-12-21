@@ -61,7 +61,7 @@
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <p>
               <b>Número:</b> <?php echo $cautela->id; ?><br />
-              <b>Setor:</b> <?php echo ($cautela->distribuicao < 2) ? "Uso do Militar" : $cautela->setor." - ".$cautela->sigla; ?><br />
+              <b>Setor:</b> <?php echo ($cautela->distribuicao < 2 && is_null($cautela->setor_id)) ? "Uso do Militar ".$cautela->setor_id : $cautela->setor." - ".$cautela->sigla; ?><br />
             </p>
             <hr>
             <div class="panel panel-default">
@@ -155,7 +155,13 @@
             <div class="center">
               <p>&nbsp;</p>
               <hr>
-              <?php echo $cautela->militar . " - " . $cautela->matricula; ?>
+              <?php 
+              if ($cautela->matricula == '000.000-0') {
+                echo "Prestador de Serviço. CPF: "; 
+              }
+              else {
+                echo $cautela->militar . " - " . $cautela->matricula; 
+              } ?>
             </div>
           </div>
           <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">

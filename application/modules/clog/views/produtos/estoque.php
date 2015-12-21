@@ -18,7 +18,7 @@
 							<label for="modelo" class="col-sm-2 control-label">Marca</label>
 							<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
 								<select name="marcas_produtos_id" id="marcas_produtos_id" class="form-control">
-									<option value="0">Selecione a marca</option>
+									<option value="">Selecione a marca</option>
 									<?php foreach($marcas as $marcas): ?>
 									<option value="<?php echo $marcas->id; ?>"><?php echo $marcas->marca; ?></option>
 									<?php endforeach; ?>
@@ -30,6 +30,29 @@
 							<label for="modelo" class="col-sm-2 control-label">Produto</label>
 							<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
 								<input type="text" name="modelo" id="modelo" class="form-control input-xs" rel="" placeholder="Nome ou Modelo do Produto"/>
+							</div>
+						</div> <!-- .form-group -->
+						<!-- Tipo produto -->
+						<div class="form-group">
+							<label for="tipo_produto" class="col-sm-2 control-label">Tipo de Produto</label>
+							<div class="col-sm-12 col-md-5 col-lg-5 col-xs-12">
+								<select name="tipo_produto" class="form-control" id="tipo_produto">
+									<option value="">Todos</option>
+									<option value="0">Consumo</option>
+									<option value="1">Permanente</option>
+								</select>
+							</div>
+						</div> <!-- .form-group -->
+						<!-- Grupo de produtos -->
+						<div class="form-group">
+							<label for="grupo_produtos" class="col-sm-2 control-label">Grupo de Produtos</label>
+							<div class="col-sm-12 col-md-5 col-lg-5 col-xs-12">
+								<select name="grupo_produtos" id="grupo_produtos" class="form-control">
+									<option value="">Selecione o Grupo de Produtos</option>
+									<?php foreach ($grupo_produtos as $grupo_produtos): ?>
+									<option value="<?php echo $grupo_produtos->id; ?>"><?php echo $grupo_produtos->nome; ?></option>
+									<?php endforeach; ?>
+								</select>
 							</div>
 						</div> <!-- .form-group -->
 						<!-- Almoxarifado -->
@@ -62,5 +85,4 @@
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="result-search">
 			<!-- Exibir consultas. -->
 		</div> <!-- .Cols -->
-	</div>
 </div> <!-- .container -->

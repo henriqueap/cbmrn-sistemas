@@ -16,9 +16,9 @@ class Notas extends MX_Controller {
 		# $this->load->library(array('auth'));
 		# $this->output->enable_profiler(TRUE);
 		# $this->load->helper('cbmrn');
-			}
+	}
 
-			public function index() {
+	public function index() {
 		# Index
 		$this->cadastro();
 	}
@@ -158,9 +158,10 @@ class Notas extends MX_Controller {
 
 	public function entrada_avulsa() {
 		# Carregando os selects
+		$entradas = $this->notas_model->listarEntradasAvulsas(10);
 		$produtos = $this->produtos_model->getProdutos();
 		$setores = $this->clog_model->getLotacoes();
-		$conteudo = $this->load->view('notas/entrada_avulsa', array('produtos' => $produtos, 'setores'=>$setores), TRUE);
+		$conteudo = $this->load->view('notas/entrada_avulsa', array('produtos' => $produtos, 'setores'=>$setores, 'entradas'=>$entradas), TRUE);
 		$this->load->view('layout/index', array('layout' => $conteudo), FALSE);
 		# Processando quando tem POST
 		if ($this->input->server('REQUEST_METHOD') == 'POST') {
@@ -178,36 +179,24 @@ class Notas extends MX_Controller {
 			$qde = $value['quantidade'] + (($controle->num_rows() > 0) ? $estoque->quantidade : 0);
 			$setor = $this->clog_model->getByID('lotacoes', $filter['lotacoes_id'])->row();
 			$produto = $this->clog_model->getByID('produtos', $filter['produtos_id'])->row();
-			$msgAuditIns = "Incluiu, avulso, ".$value['quantidade']." unidades do produto <em>".$produto->modelo."</em> no estoque do ".$setor->sigla;
-			$msgAuditUpd = "Acrescentou, avulso".$value['quantidade']." unidades do produto <em>".$produto->modelo."</em> ao estoque do ".$setor->sigla;
+			$msgAudit = $value['quantidade']." unidade(s) do produto <em>".$produto->modelo."</em> no estoque do ".$setor->sigla;
+			$msgAuditIns = "Incluiu, avulso, ".$msgAudit;
+			$msgAuditUpd = "Acrescentou, avulso, ".$msgAudit;
 			# Pegando a quantidade para incluir/alterar no banco 
 			$quant['quantidade'] = $qde;
-			# Testa se tem tombos e tenta incluir na tabela patrimonio
-			if ($this->input->post('numero_tombo') != "") {
-				# Somando os arrays
-				$data = array_merge($filter, $value);
-				# Incluindo os tombos
-				$data['tombos'] = $this->input->post('numero_tombo');
-				# Incluindo notas_fiscais_id como NULL
-				$data['notas_fiscais_id'] = NULL;
-				$res = $this->notas_model->incluiTombos($data);
-				if ($res !== TRUE) {
-					$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Houve um erro, produto(s) não incluído(s)!'));
-					redirect('clog/notas/entrada_avulsa');
-					# Bloco de auditoria
-					$auditoria = array(
-						'auditoria' => "Tentativa de incluir material permanente: ".$value['quantidade']." unidades do produto <em>".$produto->modelo."</em> no estoque do ".$setor->sigla,
-						'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
-						'idmodulo' => $this->session->userdata['sistema']
-					);
-					$this->clog_model->audita($auditoria, 'inserir');
-					# .Bloco de auditoria
-					die();
-				}
-			}
+			# Incluindo em entradas_avulsas
+			$_avulsa = array(
+				'idproduto' => $filter['produtos_id'], 
+				'quantidade' => $value['quantidade'],
+				'estoque' => $filter['lotacoes_id'],
+				'data_inclusao' => date('Y-m-d H:i:s'),
+				'idmilitar' => $this->session->userdata['id_militar']
+				);
+			$this->clog_model->inserir($_avulsa, 'entradas_avulsas');
+			# Incluindo avulsa_id
+			$avulsa_id = $this->db->insert_id();
 			# Atualização
 			if ($controle->num_rows() > 0) {
-
 				$this->db->where($filter);
 				$this->db->update('estoques', $quant);
 				# Para a auditoria
@@ -223,12 +212,39 @@ class Notas extends MX_Controller {
 				$actAudit = "inserir";
 				$msgAudit = $msgAuditIns;
 			}
+			# Testa se tem tombos e tenta incluir na tabela patrimonio
+			if ($this->input->post('numero_tombo') != "") {
+				# Somando os arrays
+				$data = array_merge($filter, $value);
+				# Incluindo os tombos
+				$data['tombos'] = $this->input->post('numero_tombo');
+				# Incluindo notas_fiscais_id como NULL
+				$data['notas_fiscais_id'] = NULL;
+				# Incluindo avulsa_id
+				$data['avulsa_id'] = $avulsa_id;
+				# Incluindo tipo tombo
+				$data['tipo_tombo'] = $this->input->post('tipo_tombo');
+				$res = $this->notas_model->incluiTombos($data);
+				if ($res !== TRUE) {
+					$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Houve um erro, produto(s) não incluído(s)!'));
+					redirect('clog/notas/entrada_avulsa');
+					# Bloco de auditoria
+					$auditoria = array(
+						'auditoria' => "Tentativa de incluir material permanente: ".$value['quantidade']." unidade(s) do produto <em>".$produto->modelo."</em> no estoque do ".$setor->sigla,
+						'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+						'idmodulo' => $this->session->userdata['sistema']
+					);
+					$this->clog_model->audita($auditoria, 'inserir');
+					# .Bloco de auditoria
+					die();
+				}
+			}
 			# Retorno
 			if ($this->db->affected_rows() > 0) {
 				$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Produto(s) incluído(s), estoque atualizado!'));
 				# Bloco de auditoria
 				$auditoria = array(
-					'auditoria' => "Incluiu $msgAudit!",
+					'auditoria' => "$msgAudit!",
 					'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 					'idmodulo' => $this->session->userdata['sistema']
 				);
@@ -248,6 +264,79 @@ class Notas extends MX_Controller {
 			}
 			redirect('clog/notas/entrada_avulsa');
 		}
+	}
+
+	public function excluir_avulsa() {
+		$id = $this->input->get('id');
+		# Testando se tem saída de produto permanente
+		$hasTombos = $this->db->get_where('patrimonio', array('avulsa_id'=>$id));
+		if ($hasTombos->num_rows() > 0) {
+			$err_count = 0;
+			$info = '';
+			foreach ($hasTombos->result() as $row) {
+				$teste = $this->produtos_model->tomboHasSaida($row->tombo);
+				if ($teste !== FALSE) {
+					switch ($teste->distribuicao) {
+						case '0':
+							$tp = 'Cautela';
+							break;
+						
+						case '1':
+							$tp = 'Distribuição';
+							break;
+
+						case '2':
+							$tp = 'Transferência';
+							break;
+					}
+					$info .= "Tombo ".$row->tombo.", na $tp nº ".$teste->cautelas_id;
+					$err_count = $err_count + 1;
+				}
+			}
+			if ($err_count > 0) {
+				# Bloco de auditoria
+				$auditoria = array(
+					'auditoria' => 'Tentativa de excluir os produtos da entrada avulsa n° ' . $id,
+					'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+					'idmodulo' => $this->session->userdata['sistema']
+				);
+				$this->clog_model->audita($auditoria, 'excluir');
+				# .Bloco de auditoria
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Existem pendências: '.$info));
+				redirect('clog/notas/listar_avulsas');
+			}
+		}
+		$avulsa = $this->notas_model->getEntradaAvulsa($id)->row();
+		$controle = $this->notas_model->excluir_entrada_avulsa($id);
+		if (! $controle) {
+			# Bloco de auditoria
+			$auditoria = array(
+				'auditoria' => 'Tentativa de excluir os produtos da entrada avulsa n° ' . $id,
+				'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+				'idmodulo' => $this->session->userdata['sistema']
+			);
+			$this->clog_model->audita($auditoria, 'excluir');
+			# .Bloco de auditoria
+			$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'A entrada avulsa não foi excluída com sucesso!'));
+		}
+		else {
+			# Bloco de auditoria
+			$auditoria = array(
+				'auditoria' => 'Excluída a entrada avulsa n° '.$id.' e o(s) produto(s), <em>'.$avulsa->produto.'</em>, do estoque do(a) '.$avulsa->estoque,
+				'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+				'idmodulo' => $this->session->userdata['sistema']
+			);
+			$this->clog_model->audita($auditoria, 'excluir');
+			# .Bloco de auditoria
+			$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'A entrada avulsa foi excluída com sucesso!'));
+		}
+		redirect('clog/notas/listar_avulsas');
+	}
+
+	public function listar_avulsas() {
+		$entradas = $this->notas_model->listarEntradasAvulsas();
+		$conteudo = $this->load->view('notas/listar_entradas_avulsas', array('entradas'=>$entradas), TRUE);
+		$this->load->view('layout/index', array('layout' => $conteudo), FALSE);
 	}
 
 	/**

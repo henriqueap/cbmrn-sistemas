@@ -45,10 +45,11 @@ class Marcas extends MX_Controller  {
 		# Excluir
 		$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Excluído com sucesso!'));
 		$exclusao = $this->clog_model->excluir('marcas_produtos', $id);
+		$info_marca = $this->clog_model->getByID('marcas_produtos', $id)->row();
 		if (! $exclusao) {
 			# Bloco de auditoria
 				$auditoria = array(
-									'auditoria'=>'Tentativa de excluir a marca de produtos ID n° '.$id.', no sistema',
+									'auditoria'=>'Tentativa de excluir a marca de produtos('.$info_marca['marca'].') de ID n° '.$id.', no sistema',
 									'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 									'idmodulo'=>$this->session->userdata['sistema']
 								);
@@ -59,7 +60,7 @@ class Marcas extends MX_Controller  {
 		else {
 			# Bloco de auditoria
 				$auditoria = array(
-									'auditoria'=>'Excluiu a marca de produtos ID n° '.$id.', no sistema',
+									'auditoria'=>'Excluiu a marca de produtos('.$info_marca['marca'].') de ID n° '.$id.', no sistema',
 									'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 									'idmodulo'=>$this->session->userdata['sistema']
 								);
@@ -87,7 +88,7 @@ class Marcas extends MX_Controller  {
 					if (! $marcas) {
 						# Bloco de auditoria
 							$auditoria = array(
-												'auditoria'=>'Tentativa de incluir nova marca de produtos no sistema',
+												'auditoria'=>'Tentativa de incluir nova marca de produtos('.$array_post['marca'].') no sistema',
 												'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 												'idmodulo'=>$this->session->userdata['sistema']
 											);
@@ -98,7 +99,7 @@ class Marcas extends MX_Controller  {
 					else {
 						# Bloco de auditoria
 							$auditoria = array(
-												'auditoria'=>'Incluiu nova marca de produtos no sistema',
+												'auditoria'=>'Incluiu nova marca de produtos('.$array_post['marca'].') no sistema',
 												'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 												'idmodulo'=>$this->session->userdata['sistema']
 											);
@@ -114,7 +115,7 @@ class Marcas extends MX_Controller  {
 					if (! $marcas) {
 						# Bloco de auditoria
 							$auditoria = array(
-												'auditoria'=>'Tentativa de alterar a marca de produtos ID n° '.$id.', no sistema',
+												'auditoria'=>'Tentativa de alterar a marca de produtos('.$array_post['marca'].') de ID n° '.$array_post['id'].', no sistema',
 												'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 												'idmodulo'=>$this->session->userdata['sistema']
 											);
@@ -125,7 +126,7 @@ class Marcas extends MX_Controller  {
 					else {
 						# Bloco de auditoria
 							$auditoria = array(
-												'auditoria'=>'Alterou a marca de produtos ID n° '.$id.', no sistema',
+												'auditoria'=>'Alterou a marca de produtos('.$array_post['marca'].') de ID n° '.$array_post['id'].', no sistema',
 												'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 												'idmodulo'=>$this->session->userdata['sistema']
 											);

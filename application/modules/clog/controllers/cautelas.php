@@ -22,9 +22,10 @@ class Cautelas extends MX_Controller {
 
 	public function index() {
 		# Index.
+		$tipo_saida = (FALSE !== $this->input->get('tp')) ? $this->input->get('tp') : 0;
 		$setores = $this->clog_model->getLotacoes()->result();
 		$estoques = $this->clog_model->getEstoques();
-		$cautelas = $this->load->view('cautelas/index', array('setores' => $setores, 'estoques' => $estoques), TRUE);
+		$cautelas = $this->load->view('cautelas/index', array('setores' => $setores, 'estoques' => $estoques, 'tipo_saida' => $tipo_saida), TRUE);
 		$this->load->view('layout/index', array('layout' => $cautelas), FALSE);
 	}
 
@@ -69,10 +70,12 @@ class Cautelas extends MX_Controller {
 					$filter = array(
 						"matricula" => $this->input->post('matricula'),
 						"data_inicio" => $this->clog_model->formataData($this->input->post('data_inicio')),
-						"data_fim" => $this->clog_model->formataData($this->input->post('data_fim'))
+						"data_fim" => $this->clog_model->formataData($this->input->post('data_fim')),
+						"uso_distro" => $this->input->post('uso_distro')
 					);
+					$uso_distro = ($filter['uso_distro'] !== FALSE) ? ' para Militar' : ' para Setor';
 					$cautelas = $this->cautelas_model->consulta_distro($filter);
-					$lista = $this->load->view('cautelas/material_distribuido', array('cautelas' => $cautelas), TRUE);
+					$lista = $this->load->view('cautelas/material_distribuido', array('cautelas' => $cautelas, 'tp_uso' => $uso_distro), TRUE);
 				}
 				else {
 					$filter = array(
@@ -115,25 +118,27 @@ class Cautelas extends MX_Controller {
 
 	public function salvar_cautela() {
 		if ($this->input->server('REQUEST_METHOD') == 'POST') {
-			$data['militares_id'] = $this->input->post('chefe_militares_id');
+			$tp = $this->input->post('tipo_saida');
 			$data['data_cautela'] = date('Y-m-d');
-			$data['estoques_id'] = ($this->input->post('estoque_origem') != 0) ? $this->input->post('estoque_origem') : 23;
-			if (!($this->cautelas_model->getProdutos(array('estoques_id' => $this->input->post('estoque_origem'))))) {
+			$data['militares_id'] = $this->input->post('chefe_militares_id');
+			# Tratando se foi selecionado o setor destino
+			if (FALSE !== $this->input->post('setor_id') && $this->input->post('setor_id') == "0") {
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Precisa selecionar o destino!'));
+				redirect("clog/cautelas/index?tp=$tp");
+			}
+			else {
+				$data['setor_id'] = $this->input->post('setor_id');
+			}
+			# Tratando estoque vazio
+			$data['estoques_id'] = (FALSE !== $this->input->post('estoque_origem') && $this->input->post('estoque_origem') != 0) ? $this->input->post('estoque_origem') : 19;
+			if (FALSE === $this->cautelas_model->getProdutos(array('estoques_id' => $this->input->post('estoque_origem')))) {
 				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Esse estoque não possui produtos!'));
-				redirect('clog/cautelas/index');
+				redirect('clog/cautelas/index?tp=$tp');
 			}
 			else {
 				# Testando se passou um tombo
 				if (FALSE !== $this->input->post('tombo')) {
 					$data['tombo'] = $this->input->post('tombo');
-					# Tratando se foi selecionado o setor destino
-					if ($this->input->post('setor_id') == "0") {
-						$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Precisa selecionar o destino!'));
-						redirect('clog/cautelas/transferencia_patrimonio');
-					}
-					else {
-						$data['setor_id'] = $this->input->post('setor_id');
-					}
 					# Testando se o tombo existe
 					$tombo_info = $this->cautelas_model->validarTombo($data['tombo']);
 					//var_dump($tombo_info); die();
@@ -165,34 +170,36 @@ class Cautelas extends MX_Controller {
 							$msg = "Cautela iniciada com sucesso!";
 						}
 						else {
-							$data['data_prevista'] = NULL;
-							$data['distribuicao'] = 1;
-							$msg = "Distribuicao iniciada com sucesso!";
-						}
-						# Salvando a nova saída de material
-						# var_dump($data); die();
-						$query = $this->clog_model->salvar('cautelas', $data);
-						# Gerando o retorno da saída
-						if ($query) {
-							$id = $this->db->insert_id();
-							# echo "<pre>"; var_dump($id); echo "</pre>"; die();
-							# Bloco de auditoria
-							$auditoria = array(
-								'auditoria' => 'Iniciou a saída de material nº ' . $id,
-								'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
-								'idmodulo' => $this->session->userdata['sistema']
-							);
-							$this->clog_model->audita($auditoria, 'inserir');
-							# .Bloco de auditoria
-							$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => $msg));
-							redirect("clog/cautelas/criar_cautela/$id");
-						}
-						else {
-							$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Não foi possível concluir sua requisição!'));
-							redirect('clog/cautelas/index');
+							$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Precisa selecionar a data de devolução!'));
+							redirect("clog/cautelas/index?tp=$tp");
 						}
 					}
-					else redirect('clog/cautelas/index');
+					else {
+						$data['data_prevista'] = NULL;
+						$data['distribuicao'] = 1;
+						$msg = "Distribuição iniciada com sucesso!";
+					}
+					# Salvando a nova saída de material
+					$query = $this->clog_model->salvar('cautelas', $data);
+					# Gerando o retorno da saída
+					if ($query) {
+						$id = $this->db->insert_id();
+						# echo "<pre>"; var_dump($id); echo "</pre>"; die();
+						# Bloco de auditoria
+						$auditoria = array(
+							'auditoria' => 'Iniciou a saída de material nº ' . $id,
+							'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+							'idmodulo' => $this->session->userdata['sistema']
+						);
+						$this->clog_model->audita($auditoria, 'inserir');
+						# .Bloco de auditoria
+						$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => $msg));
+						redirect("clog/cautelas/criar_cautela/$id");
+					}
+					else {
+						$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Não foi possível concluir sua requisição!'));
+						redirect('clog/cautelas/index?tp=$tp');
+					}
 				}
 			}
 		} // Method POST.
@@ -260,7 +267,8 @@ class Cautelas extends MX_Controller {
 				redirect("clog/index");
 			}
 			# Recupera os produtos do estoque?
-			$produtos = $this->clog_model->getEstoque($info_cautela->origem_id);
+			$tipo = ($info_cautela->distribuicao == 2) ? 1 : 0;
+			$produtos = $this->produtos_model->consulta_produtos_estoque(array('lotacoes_id'=>$info_cautela->origem_id, 'tipo'=>$tipo));
 			$itens = $this->cautelas_model->getItens($id);
 			$patrimonio = $this->cautelas_model->getTombobyCautela($id);
 			if ($patrimonio !== FALSE) {
@@ -475,10 +483,10 @@ class Cautelas extends MX_Controller {
 						'id' => $id,
 						'finalizada' => 1
 					);
-					# Tratando distros e cautelas
+					# Tratando distros e trans
 					if ($cautela->distribuicao > 0) {
 						$data['concluida'] = 1;
-						$data['data_conclusao'] = date('Y-m-d H:i:s');
+						$data['data_conclusao'] = NULL;
 						# Tratando transferência entre estoques
 						if ($cautela->distribuicao == 2) {
 							# Recuperando os IDs dos tombos
@@ -600,7 +608,7 @@ class Cautelas extends MX_Controller {
 								$controle = $this->cautelas_model->devolve_material($id);
 							}
 							else {
-								$msg = array('type' => 'alert-danger', 'msg' => 'O material constante desta cautela já foi devolvido, não pode ser cancelada!');
+								$msg = array('type' => 'alert-danger', 'msg' => 'O material constante desta cautela já foi devolvido, não pode ser cancelada!'); # Checar depois
 								$this->session->set_flashdata('mensagem', $msg);
 								redirect("clog/cautelas/index");
 							}
@@ -665,7 +673,7 @@ class Cautelas extends MX_Controller {
 			$cautela = $controle->row();
 			# Não finalizada
 			if ($cautela->finalizada == 0)
-				$msg = array('type' => 'alert-danger', 'msg' => 'A cautela não foi finalizada!');
+				$msg = array('type' => 'alert-danger', 'msg' => 'A saída não foi finalizada!');
 			# Finalizada
 			else {
 				$data = array(
@@ -702,13 +710,13 @@ class Cautelas extends MX_Controller {
 					else {
 						# Bloco de auditoria
 						$auditoria = array(
-							'auditoria' => 'Tentativa de ataualizar o estoque, após devolução do material constante da saída de material nº ' . $id,
+							'auditoria' => 'Tentativa de atualizar o estoque, após devolução do material constante da saída de material nº ' . $id,
 							'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo' => $this->session->userdata['sistema']
 						);
 						$this->clog_model->audita($auditoria, 'alterar');
 						# .Bloco de auditoria
-						$msg = array('type' => 'alert-danger', 'msg' => 'O material não foi devolvido e a cautela não foi finalizada!');
+						$msg = array('type' => 'alert-danger', 'msg' => 'O material não foi devolvido e a saída não foi concluída!');
 					}
 				}
 				# Não conseguiu
@@ -755,10 +763,15 @@ class Cautelas extends MX_Controller {
 		$this->load->view('layout/index', array('layout' => $conteudo), FALSE);
 		# Processando quando tem POST
 		if ($this->input->server('REQUEST_METHOD') == 'POST') {
+			# var_dump($this->cautelas_model->validarTombo($this->input->post('tombo'))); die();
+			if ($this->cautelas_model->validarTombo($this->input->post('tombo')) !== FALSE) {
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Este tombo está indisponível!'));
+				redirect("clog/cautelas/patrimonio_salas");
+			}
 			# Pegando  e tratando os valores do POST para criar o array de inclusão
 			$tombo_info = $this->cautelas_model->getByTombo($this->input->post('tombo'));
 			$data = array(
-				'data_lancamento' => $this->clog_model->formataData($this->input->post('data_lancamento')),
+				'data_lancamento' => ($this->input->post('data_lancamento') == '')? date('Y-m-d') : $this->clog_model->formataData($this->input->post('data_lancamento')),
 				'origem_id'=> $this->input->post('setores'),
 				'sala_id'=> $this->input->post('salas'),
 				'tombo_id'=> $tombo_info->tombo_id,
@@ -794,6 +807,12 @@ class Cautelas extends MX_Controller {
 				redirect("clog/cautelas/patrimonio_salas");
 			}
 		}
+	}
+
+	public function listaSalas() {
+		$id = $this->input->get('id');
+		$listaSalas = (! $id) ? FALSE : $this->clog_model->getSalasSetor($id);
+		$lista = $this->load->view('cautelas/lista_salas', array('salas' => $listaSalas), FALSE);
 	}
 
 }

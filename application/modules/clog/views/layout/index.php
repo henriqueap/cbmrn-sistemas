@@ -71,10 +71,10 @@
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Cadastros <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li><?php echo anchor('clog/empresa/index', 'Empresas', array('title' => 'Cadastro de Empresas')); ?></li>
-									<li><?php echo anchor('clog/produtos/index', 'Produtos', array('title' => 'Cadastro de Produtos')); ?></li>
 									<li><?php echo anchor('clog/grupos/index', 'Criar Grupos', array('title' => 'Cadastro de Grupos dos Produtos')); ?></li>
 									<li><?php echo anchor('clog/marcas/index', 'Criar Marcas', array('title' => 'Cadastro de Marcas de Produtos')); ?></li>
+									<li><?php echo anchor('clog/produtos/index', 'Produtos', array('title' => 'Cadastro de Produtos')); ?></li>
+									<li><?php echo anchor('clog/empresa/index', 'Empresas', array('title' => 'Cadastro de Empresas')); ?></li>
 									<li><?php echo anchor('clog/cadastra_sala', 'Cadastrar Salas', array('title' => 'Cadastro de Salas')); ?></li>
 								</ul>
 							</li> <!--/.dropdown-->
@@ -87,8 +87,10 @@
 									<li><?php echo anchor('clog/notas/entrada_avulsa', 'Entrada Avulsa', array('title' => 'Entrada de Material Avulsa')); ?></li>
 									<li role="separator" class="divider"></li>
 									<li role="presentation" class="disabled"><a href="#">Saídas </a></li>
-									<li><?php echo anchor('clog/cautelas/index', 'Saída de Material', array('title' => 'Cadastro de Saída de Material')); ?></li>
-									<li><?php echo anchor('clog/cautelas/saida_retroativa', 'Saída Retroativa de Material', array('title' => 'Cadastro de Saída de Material - Retroativa')); ?></li>
+									<li><?php echo anchor('clog/cautelas/index', 'Cautela de Material', array('title' => 'Cadastro de Cautela de Material')); ?></li>
+									<li><?php echo anchor('clog/cautelas/index?tp=1', 'Distribuição para Militar', array('title' => 'Cadastro de Distribuição para Militar')); ?></li>
+									<li><?php echo anchor('clog/cautelas/index?tp=3', 'Distribuição para Setor', array('title' => 'Cadastro de Distribuição para Setor')); ?></li>
+									<!--<li><?php #echo anchor('clog/cautelas/saida_retroativa', 'Saída Retroativa de Material', array('title' => 'Cadastro de Saída de Material - Retroativa')); ?></li>-->
 									<li><?php echo anchor('clog/cautelas/transferencia_material', 'Transferência de Material', array('title' => 'Transferência de Material')); ?></li>
 								</ul>
 							</li> <!--/.dropdown-->
@@ -97,6 +99,7 @@
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Consultas <b class="caret"></b></a>
 								<ul class="dropdown-menu">
 									<li><?php echo anchor('clog/notas/consulta', 'Notas Fiscais', array('title' => 'Consulta de Notas Fiscais')); ?></li>
+									<li><?php echo anchor('clog/notas/listar_avulsas', 'Entradas Avulsas', array('title' => 'Listar todas as entradas avulsas')); ?></li>
 									<li><?php echo anchor('clog/produtos/estoque', 'Estoque', array('title' => 'Consulta de Estoque')); ?></li>
 									<li><?php echo anchor('clog/produtos/consulta', 'Produtos', array('title' => 'Consulta de Produtos')); ?></li>
 									<li><?php echo anchor('clog/empresa/consulta', 'Empresas', array('title' => 'Consulta de Empresas Cadastradas')); ?></li>

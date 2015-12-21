@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row">
-    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><h1>Material Distribuído</h1></div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><h1>Material Distribuído <?php echo isset($tp_uso)? $tp_uso : ''; ?></h1></div>
     <hr>
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <div class="panel panel-default">
@@ -10,7 +10,8 @@
               <tr>
                 <th class="center">Ordem</th>
                 <th class="center">Número</th>
-                <th class="center">Data</th>
+                <th class="center">Data Saída</th>
+                <th class="center">Devolvido em</th>
                 <th class="center">Responsável</th>
                 <th>Ações</th>
               </tr>
@@ -29,23 +30,37 @@
                       <td class="center"><?php echo $count++; ?></td>
                       <td class="center"><?php echo $cautela->id; ?></td>
                       <td class="center"><?php echo $cautela->data_cautela; ?></td>
+                      <?php
+                      if (! is_null($cautela->data_conclusao)) { ?>
+                        <td class="center"><?php echo $cautela->data_conclusao; ?></td>
+                        <?php
+                      }
+                      else { ?>
+                        <td class="center"> - </td>
+                        <?php
+                      } ?>
                       <td class="center"><?php echo $cautela->militar; ?></td>
                       <td>
                         <?php
                         $itens = $this->cautelas_model->getItens($cautela->id);
                         if ($itens === FALSE || $cautela->finalizada == 0) {
                           $btnVal = "Continuar";
-                          $btnHint = "Incluir itens ou concluir a cautela";
+                          $btnHint = "Incluir itens ou concluir a distribuição";
                         }
                         else {
                           $btnVal = "Visualizar";
-                          $btnHint = "Mostrar os itens na cautela";
+                          $btnHint = "Mostrar os itens da distribuição";
                           ?>
                           <input type="button" name="btnImprimir" id="btnImprimir" value="Imprimir" title="Imprimir o termo de saída de material" onclick="window.open('<?php echo BASE_URL('index.php/clog/cautelas/imprimir', '_blank') . '?id=' . $cautela->id; ?>');">
                           <?php
                         } ?>
                         <input type="button" name="btnMostrar" id="btnMostrar" value="<?php echo $btnVal; ?>" title="<?php echo $btnHint; ?>" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/mostrar') . '?id=' . $cautela->id; ?>';">
-                        <input type="button" name="btnCancela" id="btnCancela" value="Cancelar" title="Cancelar a Distribuição" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/cancelar_cautela') . '?id=' . $cautela->id; ?>'">
+                        <?php
+                        if (is_null($cautela->data_conclusao)) { ?>
+                          <input type="button" name="btnDevolve" id="btnDevolve" value="Devolver" title="Devolver o material" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/concluir_cautela') . '?id=' . $cautela->id; ?>'">
+                          <input type="button" name="btnCancela" id="btnCancela" value="Cancelar" title="Cancelar a Distribuição" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/cancelar_cautela') . '?id=' . $cautela->id; ?>'">
+                          <?php
+                        } ?>
                       </td>
                     </tr>
                     <?php

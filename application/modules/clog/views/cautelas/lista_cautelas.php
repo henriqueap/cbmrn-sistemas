@@ -57,8 +57,8 @@
                         } ?>
                         <input type="button" name="btnMostrar" id="btnMostrar" value="<?php echo $btnVal; ?>" title="<?php echo $btnHint; ?>" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/mostrar').'?id='.$cautela->id; ?>';">
                         <?php
-                        if ($cautela->concluida != 1) { ?>
-                          <input type="button" name="btnDevolve" id="btnDevolve" value="Devolver" title="Devolver o material cautelado" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/concluir_cautela') . '?id=' . $cautela->id; ?>'">
+                        if ($cautela->distribuicao == 0 && $cautela->concluida != 1) { ?>
+                          <input type="button" name="btnDevolve" id="btnDevolve" value="Devolver" title="Devolver o material" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/concluir_cautela') . '?id=' . $cautela->id; ?>'">
                           <?php
                         } ?>
                         <input type="button" name="btnCancela" id="btnCancela" value="Cancelar" title="Cancelar a cautela" onclick="location.href = '<?php echo BASE_URL('index.php/clog/cautelas/cancelar_cautela') . '?id=' . $cautela->id; ?>'">

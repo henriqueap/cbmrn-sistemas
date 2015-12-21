@@ -20,7 +20,7 @@ class Produtos_model extends CI_Model {
 	 *
 	 */
 	public function consulta_produtos_estoque($filter) {
-		$this->db->select('marcas_produtos.marca AS marcas, produtos.modelo AS nome_produtos, estoques.quantidade AS quantidade_estoque, grupo_produtos.nome AS grupo, lotacoes.sigla AS almoxarifado, estoques.lotacoes_id');
+		$this->db->select('produtos.id, marcas_produtos.marca AS marcas, produtos.modelo AS nome_produtos, estoques.quantidade AS quantidade_estoque, grupo_produtos.nome AS grupo, lotacoes.sigla AS almoxarifado, estoques.lotacoes_id');
 		$this->db->from('produtos');
 		// Joins
 		$this->db->join('grupo_produtos', 'produtos.grupo_produtos_id = grupo_produtos.id');
@@ -28,14 +28,18 @@ class Produtos_model extends CI_Model {
 		$this->db->join('estoques', 'produtos.id = estoques.produtos_id');
 		$this->db->join('lotacoes', 'estoques.lotacoes_id = lotacoes.id');
 		// Filtros inteligentes
-		if (isset($filter['zerados']))
-			$this->db->where('estoques.quantidade >', 0);
+		if (isset($filter['tipo']))
+			$this->db->like('produtos.consumo', $filter['tipo']);
 		if (isset($filter['modelo']))
 			$this->db->like('produtos.modelo', $filter['modelo']);
 		if (isset($filter['marcas_produtos_id']))
 			$this->db->like('produtos.marcas_produtos_id', $filter['marcas_produtos_id']);
+		if (isset($filter['grupo_produtos_id']))
+			$this->db->like('grupo_produtos.id', $filter['grupo_produtos_id']);
 		if (isset($filter['lotacoes_id']))
 			$this->db->like('estoques.lotacoes_id', $filter['lotacoes_id']);
+		if (isset($filter['zerados']))
+			$this->db->where('estoques.quantidade >', 0);
 
 		$query = $this->db->get();
 		return $query;
@@ -111,6 +115,46 @@ class Produtos_model extends CI_Model {
 			return FALSE;
 	}
 
+	public function tomboHasSaida($tombo) {
+		$err_count = 0;
+		$sql = "SELECT
+							patrimonio.tombo,
+							marcas_produtos.marca,
+							produtos.modelo,
+							cautelas.id AS cautelas_id,
+							cautelas.distribuicao,
+							cautelas.finalizada,
+							cautelas.concluida,
+							cautelas.cancelada,
+							cautelas.ativa
+							FROM
+							patrimonio
+							INNER JOIN produtos ON patrimonio.produtos_id = produtos.id
+							INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+							INNER JOIN cautelas_has_produtos ON cautelas_has_produtos.tombo_id = patrimonio.id
+							INNER JOIN cautelas ON cautelas_has_produtos.cautelas_id = cautelas.id
+							WHERE (patrimonio.tombo = '$tombo') AND cautelas.cancelada = 0
+							ORDER BY cautelas.id DESC";
+		$saidaExists = $this->db->query($sql);
+		if ($saidaExists->num_rows() > 0) {
+			/*foreach ($saidaExists->result() as $row) {
+				if ($row->distribuicao == 0) {
+					$err_count += $row->cancelada == 0 ? 1 : 0;	
+					$saida = $row->cautelas_id;
+					break;
+				}
+				else {
+					$err_count += ($row->concluida == 1) ? 1 : 0;
+					$saida = $row->cautelas_id;
+					break;
+				}
+			}*/
+			# Tem que rever o retorno
+			return $saidaExists->row();
+		}
+		else return FALSE;
+	}
+
 	public function getProdutos() {
 		$sql = "SELECT
 							CONCAT(marcas_produtos.marca,' ',produtos.modelo) AS modelo,
@@ -124,7 +168,6 @@ class Produtos_model extends CI_Model {
 		return $query;
 	}
 		
-
 	public function detalheProdutos($id) {
 		$sql = "SELECT
 							produtos.id,

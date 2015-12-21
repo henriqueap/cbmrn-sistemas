@@ -1,4 +1,3 @@
-
 <table class="table table-hover table-bordered table-condensed">
 	<thead>
 		<tr>
@@ -13,7 +12,7 @@
 		<?php $count=1; foreach($consulta as $consulta): ?>
 		<tr>
 			<td><?php echo $count; ?></td>
-			<td><?php echo $consulta->nome_produtos; ?></td>
+			<td><?php echo strtoupper($consulta->nome_produtos); ?></td>
 			<td><?php echo $consulta->marcas; ?></td>
 			<td><?php echo $consulta->quantidade_estoque; ?></td>
 			<td><?php echo $consulta->almoxarifado; ?></td>

@@ -5,7 +5,7 @@
         <?php
         switch ($cautela->distribuicao) {
           case 1:
-            echo "Termo de Distribuição de Material";
+            echo "Termo de Distribuição de Material para ".(is_null($cautela->setor_id)) ? "Consumo" : "Estoque";
             break;
           case 2:
             echo "Termo de Transferência de Material";
@@ -21,7 +21,7 @@
       <p>
         <b>Número:</b> <?php echo $cautela->id; ?><br />
         <b>Estoque de Origem:</b> <?php echo $cautela->estoque_origem." - ".$cautela->estoque_sigla; ?><br />
-        <b>Destino:</b> <?php echo ($cautela->distribuicao < 2) ? "Uso do Militar" : $cautela->setor." - ".$cautela->sigla; ?><br />
+        <b>Destino:</b> <?php echo ($cautela->distribuicao < 2 && is_null($cautela->setor_id)) ? "Uso do Militar" : $cautela->setor." - ".$cautela->sigla; ?><br />
         <b>Militar:</b> <?php echo $cautela->militar; ?><br />
       </p>
       <hr>

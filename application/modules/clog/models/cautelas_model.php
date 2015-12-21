@@ -39,7 +39,7 @@ class Cautelas_model extends CI_Model {
 		#echo "<pre>"; var_dump($sql); echo "</pre>";
 		if ($this->db->query($sql)->num_rows() > 0) {
 			$testaNota = $this->db->query($sql)->row();
-			$sql .= (! is_null($testaNota->notas_id)) ? " AND notas_fiscais.ativo = 0" : "";
+			$sql .= (! is_null($testaNota->notas_id)) ? " AND notas_fiscais.ativo = 0" : ""; # Checar depois
 		}
 		$tomboExists = $this->db->query($sql);
 		# Se existir o tombo, testa se existe cautela, em aberto, com os dados passados
@@ -68,8 +68,7 @@ class Cautelas_model extends CI_Model {
 									INNER JOIN patrimonio ON patrimonio.id = cautelas_has_produtos.tombo_id
 									LEFT JOIN lotacoes ON cautelas.setor_id = lotacoes.id
 								WHERE
-									((cautelas.distribuicao = 0) OR (cautelas.distribuicao = 1)) AND
-									cautelas.concluida = 0 AND
+									((cautelas.distribuicao = 0 AND cautelas.concluida = 0) OR (cautelas.distribuicao = 1)) AND
 									cautelas.cancelada = 0 AND
 									cautelas.ativa = 1 AND
 									cautelas_has_produtos.tombo_id = $tombo_info->id
@@ -435,7 +434,7 @@ class Cautelas_model extends CI_Model {
 		else return FALSE;
 	}
 
-	 public function getByTombo($tombo) {
+	public function getByTombo($tombo) {
 	 	$tmb = (is_array($tombo)) ? $tombo['tombo'] : $tombo;
 	 	$sql = "SELECT
 						 	patrimonio.id AS tombo_id,
@@ -452,7 +451,7 @@ class Cautelas_model extends CI_Model {
 						 	#var_dump($sql);
 		$tombo_info = $this->db->query($sql);
 		return ($tombo_info->num_rows() > 0) ? $tombo_info->row() : FALSE;
-	 }
+	}
 
 	public function getTomboInfo($tombo) {
 		$sql = "SELECT
@@ -716,13 +715,13 @@ class Cautelas_model extends CI_Model {
 							DATE_FORMAT(cautelas.data_cautela,'%d/%m/%Y') AS data_cautela,
 							cautelas.setor_id,
 							lotacoes.sigla,
+							cautelas.distribuicao,
 							cautelas.ativa,
 							cautelas.finalizada,
 							cautelas.concluida,
 							cautelas.cancelada,
 							DATE_FORMAT(cautelas.data_conclusao,'%d/%m/%Y') AS data_conclusao,
-							DATE_FORMAT(cautelas.data_conclusao,'%H:%i:%S') AS hora_conclusao,
-							cautelas.distribuicao
+							DATE_FORMAT(cautelas.data_conclusao,'%H:%i:%S') AS hora_conclusao
 							FROM
 								cautelas
 								INNER JOIN militares ON cautelas.militares_id = militares.id
@@ -748,12 +747,12 @@ class Cautelas_model extends CI_Model {
 							DATE_FORMAT(cautelas.data_cautela,'%d/%m/%Y') AS data_cautela,
 							cautelas.setor_id,
 							lotacoes.sigla,
+							cautelas.distribuicao,
 							cautelas.ativa,
 							cautelas.finalizada,
 							cautelas.concluida,
 							DATE_FORMAT(cautelas.data_conclusao,'%d/%m/%Y') AS data_conclusao,
-							DATE_FORMAT(cautelas.data_conclusao,'%H:%i:%S') AS hora_conclusao,
-							cautelas.distribuicao
+							DATE_FORMAT(cautelas.data_conclusao,'%H:%i:%S') AS hora_conclusao
 							FROM
 								cautelas
 								INNER JOIN militares ON cautelas.militares_id = militares.id
@@ -780,6 +779,7 @@ class Cautelas_model extends CI_Model {
 							DATE_FORMAT(cautelas.data_cautela,'%d/%m/%Y') AS data_cautela,
 							cautelas.setor_id,
 							lotacoes.sigla,
+							cautelas.distribuicao,
 							cautelas.ativa,
 							cautelas.finalizada,
 							cautelas.concluida,
@@ -872,7 +872,6 @@ class Cautelas_model extends CI_Model {
 							CONCAT(patentes.sigla, ' ',militares.nome_guerra) AS militar,
 							DATE_FORMAT(cautelas.data_cautela,'%d/%m/%Y') AS data_cautela,
 							cautelas.distribuicao,
-							DATE_FORMAT(cautelas.data_prevista,'%d/%m/%Y') AS data_prevista_fmt,
 							cautelas.data_prevista,
 							cautelas.finalizada,
 							cautelas.concluida,
@@ -909,10 +908,10 @@ class Cautelas_model extends CI_Model {
 				$sql .= " AND (cautelas.data_cautela BETWEEN '2014-06-01' AND '$dtFim')";
 			}
 			# Fim do filtro de datas
-			# Filtro de concluídas
-			if (isset($filter['concluida'])) {
-				if ($filter['concluida'] !== FALSE) $sql .= " AND (cautelas.concluida = " . $filter['concluida'] . ")";
-				else $sql .= " AND (cautelas.concluida = 1)";
+			# Filtro de uso
+			if (isset($filter['uso_distro'])) {
+				if ($filter['uso_distro'] !== FALSE) $sql .= " AND (ISNULL(cautelas.setor_id))";
+				else $sql .= " AND NOT ISNULL(cautelas.setor_id)";
 			}
 			# Fim do filtro de concluídas
 		}
@@ -986,5 +985,6 @@ class Cautelas_model extends CI_Model {
 		return $cautela;
 		#else return FALSE;
 	}
+
 	# Fim do model
 }

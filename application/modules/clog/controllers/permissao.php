@@ -24,8 +24,10 @@ class Permissao extends MX_Controller {
 
 	public function criarGrupo() {
 		$modulos = $this->clog_model->getAll('modulos')->result();
-		$grupo = $this->load->view('permissoes/cadastro_grupo', array('modulos'=>$modulos), TRUE);
-		$this->load->view('layout/index', array('layout'=>$grupo), FALSE);
+		$grupo = (! $this->input->get('id'))? FALSE : $this->clog_model->getGrupos($this->input->get('id'))->row();
+		$grupos = $this->clog_model->getGrupos();
+		$content = $this->load->view('permissoes/cadastro_grupo', array('modulos'=>$modulos, 'grupo'=>$grupo, 'listarGrupos'=>$grupos), TRUE);
+		$this->load->view('layout/index', array('layout'=>$content), FALSE);
 	}
 
 	public function listarGrupos() {
@@ -49,40 +51,68 @@ class Permissao extends MX_Controller {
 		if ($this->input->server('REQUEST_METHOD') == 'POST') {
 			/*if ($this->form_validation->run() == TRUE) {
 				# Caso tenha sido feita a validação com sucesso.
-			} 
-			else
-			{
-				echo "<script>alert('Deu erro');</script>";
-				redirect('clog/os/index');
+				} 
+				else
+				{
+					echo "<script>alert('Deu erro');</script>";
+					redirect('clog/os/index');
 			}*/
 
 			$data = array(
 					#'modulos_id'=>$this->input->post('modulos_id'),
+					'id'=>$this->input->post('grupo_id'),
 					'nome'=>$this->input->post('grupo_nome')
 			);
-			$query = $this->clog_model->inserir($data, 'grupos_permissoes');
-			if ($query === TRUE) {
-				# Bloco de auditoria
-					$auditoria = array(
-										'auditoria'=>'Incluiu um novo grupo de permissões no sistema',
-										'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
-										'idmodulo'=>$this->session->userdata['sistema']
-									);
-					$this->clog_model->audita($auditoria, 'inserir');
-				# .Bloco de auditoria
-				$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Grupo de permissões cadastrado com sucesso!'));
+			if ($this->input->post('grupo_id') != '') {
+				$query = $this->clog_model->atualizar('grupos_permissoes', $data);
+				if ($query === TRUE) {
+					# Bloco de auditoria
+						$auditoria = array(
+							'auditoria'=>'Alterou o nome do grupo de permissões nº '.$this->input->post('grupo_id').' para <em>'.$data['nome'].'</em>',
+							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+							'idmodulo'=>$this->session->userdata['sistema']
+						);
+						$this->clog_model->audita($auditoria, 'alterar');
+					# .Bloco de auditoria
+					$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Grupo de permissões renomeado com sucesso!'));
+				}
+				else {
+					# Bloco de auditoria
+						$auditoria = array(
+							'auditoria'=>'Tentativa de alterar o nome do grupo de permissões nº '.$this->input->post('grupo_id').' para <em>'.$data['nome'].'</em>',
+							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+							'idmodulo'=>$this->session->userdata['sistema']
+						);
+						$this->clog_model->audita($auditoria, 'alterar');
+					# .Bloco de auditoria
+					$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao renomear o grupo de permissões!'));
+				}
 			}
 			else {
-				# Bloco de auditoria
-					$auditoria = array(
-										'auditoria'=>'Tentativa de incluir um novo grupo de permissões no sistema',
-										'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
-										'idmodulo'=>$this->session->userdata['sistema']
-									);
-					$this->clog_model->audita($auditoria, 'inserir');
-				# .Bloco de auditoria
-				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao cadastrar novo grupo de permissões!'));
-			}
+				$query = $this->clog_model->inserir($data, 'grupos_permissoes');
+				if ($query === TRUE) {
+					# Bloco de auditoria
+						$auditoria = array(
+							'auditoria'=>'Incluiu um novo grupo de permissões no sistema',
+							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+							'idmodulo'=>$this->session->userdata['sistema']
+						);
+						$this->clog_model->audita($auditoria, 'inserir');
+					# .Bloco de auditoria
+					$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Grupo de permissões cadastrado com sucesso!'));
+				}
+				else {
+					# Bloco de auditoria
+						$auditoria = array(
+							'auditoria'=>'Tentativa de incluir um novo grupo de permissões no sistema',
+							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+							'idmodulo'=>$this->session->userdata['sistema']
+						);
+						$this->clog_model->audita($auditoria, 'inserir');
+					# .Bloco de auditoria
+					$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao cadastrar novo grupo de permissões!'));
+				}
+			} 
 			redirect('clog/permissao/criarGrupo');
 		} 
 		else redirect('clog/permissao/criarGrupo'); # Caso não tenha sido enviado nenhum POST.

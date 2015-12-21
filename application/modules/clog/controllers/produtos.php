@@ -55,10 +55,11 @@ class Produtos extends MX_Controller {
   public function excluir($id) {
     # Excluir
     $exclusao = $this->clog_model->excluir('produtos', $id);
+    $info_produto = $this->produtos_model->detalheProdutos($id)->row();
     if (!$exclusao) {
       # Bloco de auditoria
       $auditoria = array(
-          'auditoria' => 'Tentativa de excluir o produto ID n° ' . $id . ' do sistema',
+          'auditoria' => 'Tentativa de excluir o produto <em>'.$info_produto->modelo.'</em>, de ID n° ' . $id . ' do sistema',
           'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
           'idmodulo' => $this->session->userdata['sistema']
       );
@@ -68,7 +69,7 @@ class Produtos extends MX_Controller {
     } else {
       # Bloco de auditoria
       $auditoria = array(
-          'auditoria' => 'Excluiu o grupo de produtos ID n° ' . $id . ' do sistema',
+          'auditoria' => 'Excluiu o produto <em>'.$info_produto->modelo.'</em>, de ID n° ' . $id . ' do sistema',
           'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
           'idmodulo' => $this->session->userdata['sistema']
       );
@@ -134,7 +135,7 @@ class Produtos extends MX_Controller {
           }
           # Bloco de auditoria
           $auditoria = array(
-              'auditoria' => 'Incluiu novo produto no sistema',
+              'auditoria' => 'Incluiu novo produto('.$data['modelo'].') no sistema',
               'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
               'idmodulo' => $this->session->userdata['sistema']
           );
@@ -144,7 +145,7 @@ class Produtos extends MX_Controller {
         } else {
           # Bloco de auditoria
           $auditoria = array(
-              'auditoria' => 'Tentativa de inclusão de novo produto no sistema',
+              'auditoria' => 'Tentativa de inclusão de novo produto('.$data['modelo'].') no sistema',
               'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
               'idmodulo' => $this->session->userdata['sistema']
           );
@@ -155,10 +156,11 @@ class Produtos extends MX_Controller {
         # Redirect for produtos.
         redirect('clog/produtos/index');
       } else {
+        $info_produto = $this->produtos_model->detalheProdutos( $data['id'])->row();
         if ($this->clog_model->atualizar('produtos', $data)) {
           # Bloco de auditoria
           $auditoria = array(
-              'auditoria' => 'Alterou os dados do produto ID n° ' . $data['id'] . ', no sistema',
+              'auditoria' => 'Alterou os dados do produto <em>'.$info_produto->modelo.'</em>, de ID n° ' . $data['id'] . ', no sistema',
               'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
               'idmodulo' => $this->session->userdata['sistema']
           );
@@ -168,7 +170,7 @@ class Produtos extends MX_Controller {
         } else {
           # Bloco de auditoria
           $auditoria = array(
-              'auditoria' => 'Tentativa de alterar os dados do produto ID n° ' . $data['id'] . ', no sistema',
+              'auditoria' => 'Tentativa de alterar os dados do produto <em>'.$info_produto->modelo.'</em>, de ID n° ' . $data['id'] . ', no sistema',
               'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
               'idmodulo' => $this->session->userdata['sistema']
           );
@@ -187,11 +189,11 @@ class Produtos extends MX_Controller {
    */
   public function consulta() {
     # Consulta.
-    $consulta = $this->clog_model->listar('grupo_produtos')->result();
+    $grupo = $this->clog_model->listar('grupo_produtos')->result();
     $marcas_produtos = $this->clog_model->listar('marcas_produtos')->result();
 
     # Views.
-    $produtos = $this->load->view('produtos/consulta', array('grupo_produtos' => $consulta, 'marcas_produtos' => $marcas_produtos), TRUE);
+    $produtos = $this->load->view('produtos/consulta', array('grupo_produtos' => $grupo, 'marcas_produtos' => $marcas_produtos), TRUE);
     $this->load->view('layout/index', array('layout' => $produtos), FALSE);
   }
 
@@ -203,18 +205,23 @@ class Produtos extends MX_Controller {
     $listar_empresas = $this->clog_model->listar('empresas')->result();
     # Listar Marcas de Produtos
     $listar_marcas = $this->clog_model->listar('marcas_produtos')->result();
+    # Listar Grupos de Produtos
+    $grupo = $this->clog_model->listar('grupo_produtos')->result();
     # Listar Setores
     $setores = $this->clog_model->getLotacoes()->result();
-    $produtos = $this->load->view('produtos/estoque', array('empresa' => $listar_empresas, 'marcas' => $listar_marcas, 'setores' => $setores), TRUE);
+    $produtos = $this->load->view('produtos/estoque', array('grupo_produtos' => $grupo, 'empresa' => $listar_empresas, 'marcas' => $listar_marcas, 'setores' => $setores), TRUE);
     $this->load->view('layout/index', array('layout' => $produtos), FALSE);
   }
 
   public function consulta_estoque() {
     # Consulta Estoque.
     $filter = array();
-
     if ($this->input->get('zerados') != "true")
       $filter['zerados'] = $this->input->get('zerados');
+    if ($this->input->get('tipo') != "") 
+      $filter['tipo'] = $this->input->get('tipo');
+    if ($this->input->get('grupo_produtos') != "") 
+      $filter['grupo_produtos_id'] = $this->input->get('grupo_produtos');
     if ($this->input->get('modelo') != "")
       $filter['modelo'] = $this->input->get('modelo');
     if ($this->input->get('marcas') != 0)
@@ -232,6 +239,33 @@ class Produtos extends MX_Controller {
       $this->clog_model->audita($auditoria, 'consultar'); */
     # .Bloco de auditoria
     $this->load->view('produtos/resultado_consulta_estoque', array('consulta' => $consulta), FALSE);
+  }
+
+  public function lista_produtos_estoque() {
+    # Consulta Estoque.
+    $filter = array();
+    if ($this->input->get('zerados') != "true")
+      $filter['zerados'] = $this->input->get('zerados');
+    if ($this->input->get('tipo') != "")
+      $filter['tipo'] = $this->input->get('tipo');
+    if ($this->input->get('modelo') != "")
+      $filter['modelo'] = $this->input->get('modelo');
+    if ($this->input->get('marcas') != 0)
+      $filter['marcas_produtos_id'] = $this->input->get('marcas');
+    if ($this->input->get('almox') != 0)
+      $filter['lotacoes_id'] = $this->input->get('almox');
+
+    $consulta = $this->produtos_model->consulta_produtos_estoque($filter)->result();
+    # Bloco de auditoria
+    /* $auditoria = array(
+      'auditoria'=>'Consultou o estoque de produtos',
+      'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
+      'idmodulo'=>$this->session->userdata['sistema']
+      );
+      $this->clog_model->audita($auditoria, 'consultar'); */
+    # .Bloco de auditoria
+    $content = $this->load->view('produtos/resultado_consulta_estoque', array('consulta' => $consulta), TRUE);
+    $this->load->view('produtos/lista_produtos_estoque', array('layout' => $content), FALSE);
   }
 
   public function consulta_produtos() {
