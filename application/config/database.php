@@ -3,24 +3,11 @@
 $active_group = 'default';
 $active_record = TRUE;
 
-# $db['default']['hostname'] = '10.1.3.82';
-# $db['default']['username'] = 'cbomrn';
-# $db['default']['password'] = 'cbomrn123@';
-
-# $db['default']['hostname'] = 'localhost';
-# $db['default']['username'] = 'root';
-# $db['default']['password'] = '824611';
-
-# $db['default']['hostname'] = '10.9.3.200';
-# $db['default']['username'] = 'hiury';
-# $db['default']['password'] = 'dev';
-
-$db['default']['hostname'] = '192.168.0.10';
-$db['default']['username'] = 'cbmrn';
-$db['default']['password'] = 'dev';
+$db['default']['hostname'] = '';
+$db['default']['username'] = '';
+$db['default']['password'] = '';
 
 $db['default']['database'] = 'cbmrn_sistemas';
-# $db['default']['database'] = 'cbmrn';
 
 $db['default']['dbdriver'] = 'mysql';
 $db['default']['dbprefix'] = '';
