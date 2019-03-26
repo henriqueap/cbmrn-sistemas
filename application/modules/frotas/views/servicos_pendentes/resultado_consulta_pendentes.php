@@ -31,15 +31,15 @@
                                     <td><?php echo $lista->statusDescricao; ?></td>
                                     <td>
                                     <?php  if ($lista->situacao_id != 6 && $lista->retroativo == 0) {?> 
-                                        <a type="button" data-toggle="modal" data-target="#myModal-Cancelado" class="btn btn-default btn-xs" onclick="confirmarCancelarServico('<?php echo base_url('frotas/servicos_pendentes/atualizarStatusCancelado').'/'.$lista->idServico;?>')">
+                                        <a type="button" data-toggle="modal" data-target="#myModal-Cancelado" class="btn btn-default btn-xs" onclick="confirmarCancelarServico('<?php echo base_url('index.php/frotas/servicos_pendentes/atualizarStatusCancelado').'/'.$lista->idServico;?>')">
                                             <span title="Cancelar Serviço" class="glyphicon glyphicon-remove"></span>
                                         </a>
                                         <?php  if ($lista->situacao_id >= 2 ) {?>
-                                        <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
+                                        <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
                                             <span  class="glyphicon glyphicon-plus"></span>
                                         </a>
                                         <?php } if ($lista->autorizado == 1 && $lista->situacao_id == 2) {?> 
-                                            <a title="Executar Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/execucaoServico').'/'.$lista->idServico;?>" >
+                                            <a title="Executar Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/execucaoServico').'/'.$lista->idServico;?>" >
                                              <span  class="glyphicon glyphicon-play"></span>
                                             </a>
                                         <?php }?>
@@ -51,7 +51,7 @@
                                             </a>
                                     <?php }
                                         }else{?>
-                                            <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
+                                            <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
                                                 <span  class="glyphicon glyphicon-plus"></span>
                                             </a>
                                       <?php  } ?>

@@ -2,30 +2,33 @@
 	<div class="row">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><h1>Filtros</h1></div>
 		<hr>
-		<?php echo form_open("clog/filtrar_auditoria", array('role'=>'form', 'class'=>'form-inline', 'id'=>'frm-audita')); ?>
+		<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+			<?php echo form_open("clog/filtrar_auditoria", array('role'=>'form', 'class'=>'form-inline', 'id'=>'frm-audita')); ?>		
+			<input type="hidden" name="pg_atual" id="pg_atual" value="1"/>
 			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-				<input type="hidden" name="pg_atual" id="pg_atual" value="1"/>
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-2 form-group">
-					<!--<input type="date" name="data_inicial" class="control-inline" id="data_inicial" title="Data Inicial" value="<?php //echo (isset($filters['data_inicial'])) ? $filters['data_inicial'] : ''; ?>"/>-->
+				<!-- Data inicial -->
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 form-group">
 					<div class="input-group">
-						<label for="data_inicial" class="control-label">Período&nbsp;</label>
+						<label for="data_inicial" class="control-label">Data Inicial&nbsp;&nbsp;</label>
+						<!--<input type="date" name="data_inicial" class="control-inline" id="data_inicial" title="Data Inicial" value="<?php //echo (isset($filters['data_inicial'])) ? $filters['data_inicial'] : ''; ?>"/>-->
 						<span id="calendar-add-on" class="glyphicon glyphicon-calendar input-group-addon" aria-hidden="true"></span>
 						<input name="data_inicial" class="control-inline data" type="text" aria-describedby="calendar-add-on" rel="data" id="data_inicial" title="Data Inicial" value="<?php echo (isset($filters['data_inicial'])) ? $filters['data_inicial'] : '2014-01-01'; ?>"/>
 					</div>
-				</div>
-				&nbsp;
-				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-2 form-group">	
-					<!--<input type="date" name="data_final" class="control-inline" id="data_final" title="Data Final" value="<?php //echo (isset($filters['data_final'])) ? $filters['data_final'] : ''; ?>"/>-->
+				</div>						
+				<!-- Data final -->
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 form-group">	
 					<div class="input-group">
-						<label for="data_final" class="control-label">&nbsp;&nbsp;à&nbsp;</label>
+						<label for="data_final" class="control-label">Data Final&nbsp;&nbsp;</label>						
+						<!--<input type="date" name="data_final" class="control-inline" id="data_final" title="Data Final" value="<?php //echo (isset($filters['data_final'])) ? $filters['data_final'] : ''; ?>"/>-->
 						<span id="calendar-add-on" class="glyphicon glyphicon-calendar input-group-addon" aria-hidden="true"></span>
 						<input name="data_final" class="control-inline data" type="text" aria-describedby="calendar-add-on" rel="data" id="data_final" title="Data Final" value="<?php echo (isset($filters['data_final'])) ? $filters['data_final'] : ''; ?>"/>
 					</div>
 				</div>
+				<!-- Tipo de ação -->
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 form-group">
-					<label for="tipo_auditoria" class="control-label">Ação</label>
+					<label for="tipo_auditoria" class="control-label">Tipo de Ação</label>
 					<select name="tipo_auditoria" class="control-inline" id="tipo_auditoria">
-						<option value="0">Selecione a ação</option>
+						<option value="0">Selecione o tipo</option>
 						<?php 
 						foreach($acoes as $acao): 
 							if (isset($filters['idtipo']) && $filters['idtipo'] == $acao->id) { ?>
@@ -39,6 +42,7 @@
 						endforeach; ?>
 					</select>
 				</div>
+				<!-- Militar -->
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-3 form-group">
 					<label for="militares_id" class="control-label">Militar</label>
 					<select name="militares_id" class="control-inline" id="militares_id">
@@ -55,14 +59,29 @@
 						endforeach; ?>
 					</select>
 				</div>
+			</div>
+			<!-- Filtros 2-->
+			<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">					
+				<!-- Texto na ação -->
+				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-4 form-group">
+					<label for="auditoria" class="control-label">Palavra-chave</label>
+					<input name="auditoria" class="control-inline" type="text" id="auditoria" title="Busca texto na ação da auditoria" value=""/>
+				</div>
+				<!-- Linhas -->
+				<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2 form-group">
+					<label for="linhas" class="control-label">Nº Linhas</label>
+					<input name="linhas" class="control-inline-sm" type="text" id="linhas" title="Resultados por página" value="20"/>
+				</div>
+				<!-- Botão -->
 				<div class="col-xs-12 col-sm-12 col-md-6 col-lg-1 form-group">
 					<!--<button class="btn btn-default" id="btn-consulta-auditoria">Aplicar</button>-->
 					<input type="submit" class="btn btn-default" id="btn-consulta-auditoria" value="Aplicar"/>
 				</div>
 			</div>
-		<?php echo form_close(); ?><br />
-		<hr>
+			<?php echo form_close(); ?><br />		
+		</div>
 	</div>
+	<hr>
 	<div class="row">
 		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"><h1>Auditoria</h1></div>
 		<hr>

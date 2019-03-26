@@ -5,7 +5,8 @@
         <?php
         switch ($cautela->distribuicao) {
           case 1:
-            echo "Termo de Distribuição de Material para ".(is_null($cautela->setor_id)) ? "Consumo" : "Estoque";
+            echo "Termo de Distribuição de Material para ";
+            echo (is_null($cautela->setor_id)) ? "Consumo" : "Setor";
             break;
           case 2:
             echo "Termo de Transferência de Material";
@@ -56,7 +57,7 @@
                         ?>
                         <tr>
                           <td><?php echo $count++; ?></td>
-                          <td><?php echo ($item->ativo == 0) ? $item->produto." (Transferido para ".$cautela->setor.")" : $item->produto; ?></td>
+                          <td><?php echo ($item->ativo == 0 && ($item->destino_id != $item->estoque_id)) ? $item->produto." (Transferido para ".$tombo->setor_atual.")" : $item->produto; ?></td>
                           <td><?php echo $tombo->tombo; ?></td>
                           <td><?php echo $item->quantidade; ?></td>
                           <td><?php echo $cautela->data_cautela; ?></td>

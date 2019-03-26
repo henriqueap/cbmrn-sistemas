@@ -15,6 +15,23 @@ class Empresa_model extends CI_Model {
 		$this->load->database();
 	}
 
+	public function getDadosEmpresa($id) {
+		$_sql = "SELECT
+							empresas.id,
+							empresas.nome_fantasia,
+							empresas.razao_social,
+							empresas.cnpj,
+							enderecos.id AS enderecos_id,
+							contatos_das_empresas.contatos_id
+							FROM
+							empresas
+							INNER JOIN enderecos ON empresas.enderecos_id = enderecos.id
+							INNER JOIN contatos_das_empresas ON contatos_das_empresas.empresas_id = empresas.id
+							WHERE empresas.id = $id";
+		$query = $this->db->query($_sql);
+		return ($query === FALSE)? FALSE : $query->row();
+	}
+
 	public function cadastroRetorno($data2) {	  
 		if (is_array($data2)) {
 			$query = $this->db->insert('enderecos', $data2); 

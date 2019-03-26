@@ -65,6 +65,7 @@ class Lotacao_model extends CI_Model {
 
   public function getById($id=NULL) {
     if ($id==NULL) {
+      $this->db->where('sala', 0);
       return $query = $this->db->get($this->table_name);
     } else {
       $this->db->where('id', $id);
@@ -77,8 +78,9 @@ class Lotacao_model extends CI_Model {
    * @param null 
    */
   public function getLotacao() {
-    $this->db->select("$this->table_name.*");
+    $this->db->where('sala', 0);
     $this->db->from($this->table_name);
+    $this->db->select("$this->table_name.*");
 
     if (isset($filter['nome'])) {
       $this->db->like($this->table_name . '.nome', $filter['nome']);
@@ -86,5 +88,23 @@ class Lotacao_model extends CI_Model {
 
     $this->db->order_by("$this->table_name.nome", 'asc');
     return $this->db->get();
+  }
+
+  /**
+   * Função criada para fazer listar os dados na tabela lotacaoes
+   * @param null 
+   */
+  public function getLotacoes($id = NULL) {
+    $tbl = "lotacoes";
+    $id = (! $this->input->get('id'))? NULL : $this->input->get('id');
+    if (! is_null($id)) $whr['id'] = $id;
+    $whr['sala'] = 0;
+    $this->db->where($whr);
+    $query = $this->db->get($tbl);
+    if ($query->num_rows() > 0) {
+      return $query;
+    } else {
+      return FALSE;
+    }
   }
 }

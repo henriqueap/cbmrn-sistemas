@@ -1,6 +1,8 @@
 ﻿<div class="container">
   	<div class="well well-cadastro"> 
-    <a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('frotas/listar_viaturas/listarOdometros'."/".$listarOdometrosId ->idviaturas)?>" > <span></span></a>      
+    <a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('index.php/frotas/listar_viaturas/listarOdometros'."/".$listarOdometrosId ->idviaturas)?>" >
+      <span></span>
+    </a>      
       <h3 class="form-signin-heading">Cadastro de Odômetro</h3> 
       <div class="panel-body"> 
         

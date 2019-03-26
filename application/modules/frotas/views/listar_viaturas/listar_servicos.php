@@ -4,7 +4,7 @@
     	<h3 class="form-signin-heading">Lista de Serviços da Viaturas</h3>        
         <div class="panel-body">
              <div class="form-group">            	
-             		<a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('frotas/listar_viaturas/listar')?>" > <span></span></a>            	
+             		<a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('index.php/frotas/listar_viaturas/listar')?>" > <span></span></a>            	
              </div>
              <div class="row">
                     <div class="form-group">
@@ -27,7 +27,7 @@
                                 <input name="dataFinal" class="form-control" type="date" id="dataFinal"  value="<?php echo date('Y-m-d')?>" />
                             </div>
                             <button type="button" class="glyphicon glyphicon-ok btn btn-sm  btn btn-sm btn-danger" title="Aplicar Filtro" id="btn-buscar-filtro-servicos"><span></span></button>
-                            <a href="<?php echo base_url('frotas/listar_viaturas/listarServicos').'/'.$idViatura?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
+                            <a href="<?php echo base_url('index.php/frotas/listar_viaturas/listarServicos').'/'.$idViatura?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
                         </form>
                  	</div>
              </div>

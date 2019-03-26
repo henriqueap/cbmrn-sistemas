@@ -28,7 +28,7 @@
             		</select>
           		</div> 
              		<button type="button" class="glyphicon glyphicon-ok btn btn-sm  btn btn-sm btn-danger" title="Aplicar Filtro" id="btn-buscar-filtro-relatorio"><span></span></button>
-                    <a href="<?php echo base_url('frotas/relatorio_geral/relatorio')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a>		
+                    <a href="<?php echo base_url('index.php/frotas/relatorio_geral/relatorio')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a>		
                  </div>
                 
                </form>

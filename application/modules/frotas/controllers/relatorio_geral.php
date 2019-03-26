@@ -1,13 +1,13 @@
 ﻿<?php
 
 if (!defined('BASEPATH'))
-    exit('No direct script access allowed');
+		exit('No direct script access allowed');
 
  /**
-  * @version 1.0
-  * @author CBM-RN
-  * @link http://www.cbm.rn.gov.br/
-  */
+	* @version 1.0
+	* @author CBM-RN
+	* @link http://www.cbm.rn.gov.br/
+	*/
 class Relatorio_geral extends MX_Controller {
 	private $listar_viaturas;
 	
@@ -15,6 +15,7 @@ class Relatorio_geral extends MX_Controller {
 		parent::__construct();
 		$this->load->model('relatorio_geral_model');
 	}
+
 	public function index(){
 		$listar=$this->load->view('relatorio_geral/relatorio', '', TRUE);
 		$this->load->view('layout/index', array('layout'=>$listar), FALSE);		 
@@ -34,6 +35,6 @@ class Relatorio_geral extends MX_Controller {
 			);
 		$listar_relatorios=$this->relatorio_geral_model->relatorioFiltrar($data);
 		$listar=$this->load->view('relatorio_geral/resultado_consulta_relatorio', array('listar_relatorios'=>$listar_relatorios), FALSE);
-		  
+			
 	}
 }

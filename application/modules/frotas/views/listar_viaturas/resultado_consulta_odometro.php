@@ -28,7 +28,7 @@
                     <td><?php echo $listar->destino; ?> </td>
                     <td><?php echo $listar->sigla." ".$listar->nome_guerra; ?></td>
                     <td>  
-                        <a title="Editar" type="button" class=" btn-xs btn-default " href=" <?php echo base_url('frotas/listar_viaturas/editarOdometros').'/'.$listar->idodometros;?>"><span class="glyphicon glyphicon-pencil"></span>
+                        <a title="Editar" type="button" class=" btn-xs btn-default " href=" <?php echo base_url('index.php/frotas/listar_viaturas/editarOdometros').'/'.$listar->idodometros;?>"><span class="glyphicon glyphicon-pencil"></span>
                         </a>
                     </td>                                
                 </tr>

@@ -25,6 +25,11 @@ class Empresa extends MX_Controller {
 		$this->load->view('layout/index', array('layout' => $empresa), FALSE);
 		
 		if ($this->input->server('REQUEST_METHOD') == 'POST'){
+			$cnpjExists = $this->db->get_where('empresas', array('cnpj' => $this->input->post('inputCNPJ')));
+			if ($cnpjExists->num_rows() > 0) {
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao cadastrar! Já existe empresa com este CNPJ cadastrado'));
+				redirect('clog/empresa/index');
+			}
 			$data2=array(
 				'logradouro'=>$this->input->post('inputEnd'),
 				'numero'=>$this->input->post('inputNum'),
@@ -117,20 +122,24 @@ class Empresa extends MX_Controller {
 	}
 
 	public function editar($id) {
-		$dados_empresa = $this->clog_model->listar('empresas', $id)->row();
-		$dados_endereco = $this->clog_model->listar('enderecos', $dados_empresa->enderecos_id)->row();
-		$dados_contato_id = $this->clog_model->listar('contatos_das_empresas', $dados_empresa->enderecos_id)->row();
-		$dados_contato = $this->clog_model->listar('contatos', $dados_contato_id->id)->row();
-		$dados_telefone = $this->clog_model->listar('telefones', $dados_contato->telefones_id)->row();
-
-		$empresas = $this->load->view('empresa/editar', 
-			array(
-				'dados_empresa'=>$dados_empresa, 
-				'dados_endereco'=>$dados_endereco, 
-				'dados_contato'=>$dados_contato, 
-				'dados_telefone'=>$dados_telefone
-			), TRUE);
-		$this->load->view('layout/index', array('layout'=>$empresas), FALSE);
+		$dados_empresa = $this->empresa_model->getDadosEmpresa($id);
+		if (! $dados_empresa) {
+			$this->session->set_flashdata('Não foi possível obter os dados da empresa com ID $id', array('type' => 'alert-danger', 'msg' => 'Erro ao cadastrar!'));
+			redirect($this->consulta());
+		}
+		else {
+			$dados_endereco = $this->clog_model->listar('enderecos', $dados_empresa->enderecos_id)->row();
+			$dados_contato = $this->clog_model->listar('contatos',$dados_empresa->contatos_id)->row();
+			$dados_telefone = $this->clog_model->listar('telefones', $dados_contato->telefones_id)->row();
+			$empresas = $this->load->view('empresa/editar', 
+				array(
+					'dados_empresa'=>$dados_empresa, 
+					'dados_endereco'=>$dados_endereco, 
+					'dados_contato'=>$dados_contato, 
+					'dados_telefone'=>$dados_telefone
+				), TRUE);
+			$this->load->view('layout/index', array('layout'=>$empresas), FALSE);
+		}
 	}
 
 	public function editar_salvar() {

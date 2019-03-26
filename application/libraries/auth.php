@@ -27,7 +27,7 @@ class Auth	{
 		$CI = & get_instance();
 
 		# Instanciar banco de dados.
-		$CI->load->database();
+		$CI->load->database('cblab');
 		$CI->load->model('acesso_model');
 		$CI->load->helper('url');
 
@@ -61,7 +61,7 @@ class Auth	{
 		$CI = & get_instance();
 
 		# Instanciar banco de dados.
-		$CI->load->database();
+		$CI->load->database('cblab');
 		$CI->load->model('acesso_model');
 		$CI->load->helper('url');
 		$CI->load->library('session');
@@ -78,12 +78,13 @@ class Auth	{
 			redirect("acesso");
 		}
 
+		# O Array aumenta em um quando na internet
 		if (isset($uri_array[4])) {
 			# Capturar modulo.	
 			$modulo = $uri_array[3].'/'.$uri_array[4];
 
 			if (isset($uri_array[5])) {
-				if ($uri_array[5] == "index") {
+				if (stristr($uri_array[5], "index")) {
 					$modulo = $uri_array[3].'/'.$uri_array[4];
 				}
 				else {
@@ -95,8 +96,8 @@ class Auth	{
 			# var_dump($modulo);
 
 			if (!$CI->acesso_model->getPermissao($modulo, $militar)) { 
-				$CI->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'O usuário logado não tem acesso a esta página do sistema!'));
-				redirect("clog/clog/index");
+				$CI->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'O usuário logado não tem acesso à página '.$modulo));
+				redirect("clog/index");
 				# $sistema = $CI->session->userdata('sistema');
 				#redirect("");
 			} 

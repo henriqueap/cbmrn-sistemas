@@ -75,7 +75,10 @@
 									<li><?php echo anchor('clog/marcas/index', 'Criar Marcas', array('title' => 'Cadastro de Marcas de Produtos')); ?></li>
 									<li><?php echo anchor('clog/produtos/index', 'Produtos', array('title' => 'Cadastro de Produtos')); ?></li>
 									<li><?php echo anchor('clog/empresa/index', 'Empresas', array('title' => 'Cadastro de Empresas')); ?></li>
+									<li><?php echo anchor('clog/cadastra_setor', 'Cadastrar Setores', array('title' => 'Cadastro de Setores')); ?></li>
 									<li><?php echo anchor('clog/cadastra_sala', 'Cadastrar Salas', array('title' => 'Cadastro de Salas')); ?></li>
+									<li><?php echo anchor('clog/cadastra_responsavel', 'Responsável por Setor/Almoxarifado', array('title' => 'Cadastro de Responsáveis por Salas')); ?></li>
+									<li><?php echo anchor('clog/cadastra_responsavel?sala=1', 'Responsável por Salas', array('title' => 'Cadastro de Responsáveis por Salas')); ?><
 								</ul>
 							</li> <!--/.dropdown-->
 
@@ -90,6 +93,7 @@
 									<li><?php echo anchor('clog/cautelas/index', 'Cautela de Material', array('title' => 'Cadastro de Cautela de Material')); ?></li>
 									<li><?php echo anchor('clog/cautelas/index?tp=1', 'Distribuição para Militar', array('title' => 'Cadastro de Distribuição para Militar')); ?></li>
 									<li><?php echo anchor('clog/cautelas/index?tp=3', 'Distribuição para Setor', array('title' => 'Cadastro de Distribuição para Setor')); ?></li>
+									<li><?php echo anchor('clog/cautelas/patrimonio_salas', 'Transferência para Sala', array('title' => 'Transfere Material Permanente para Sala')); ?></li>
 									<!--<li><?php #echo anchor('clog/cautelas/saida_retroativa', 'Saída Retroativa de Material', array('title' => 'Cadastro de Saída de Material - Retroativa')); ?></li>-->
 									<li><?php echo anchor('clog/cautelas/transferencia_material', 'Transferência de Material', array('title' => 'Transferência de Material')); ?></li>
 								</ul>
@@ -105,7 +109,9 @@
 									<li><?php echo anchor('clog/empresa/consulta', 'Empresas', array('title' => 'Consulta de Empresas Cadastradas')); ?></li>
 									<li><?php echo anchor('clog/cautelas/consulta_cautelas', 'Cautelas', array('title' => 'Consulta de Cautelas')); ?></li>
 									<li><?php echo anchor('clog/cautelas/consulta_distros', 'Distribuição', array('title' => 'Consulta de Distribuições')); ?></li>
-									<li><?php echo anchor('clog/cautelas/consulta_transferencias', 'Transferência', array('title' => 'Consulta de Transferências')); ?></li>
+									<li><?php echo anchor('clog/cautelas/consulta_transferencias', 'Transferência para Setor', array('title' => 'Consulta de Transferências para Setor')); ?></li>
+									<li><?php echo anchor('clog/cautelas/consulta_transferencias?sala=1', 'Transferência para Sala', array('title' => 'Consulta de Transferências para Sala')); ?></li>
+									<li><?php echo anchor('clog/cautelas/consulta_patrimonio_sala', 'Patrimônio de Sala', array('title' => 'Listar material carga de uma sala')); ?></li>
 									<li><?php echo anchor('clog/cautelas/consulta_tombo', 'Tombo', array('title' => 'Consulta de Tombo')); ?></li>
 								</ul>
 							</li> <!--/.dropdown-->

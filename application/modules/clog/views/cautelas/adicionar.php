@@ -1,7 +1,13 @@
 <div class="container">
 	<div class="row">
 		<div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
-			<h1>Incluir Ítens</h1>
+			<?php if ($cautela->distribuicao == 1) {
+				$destino = " - Distribuição de Material de Consumo para ".(is_null($cautela->setor_id) ? "Militar" : "Setor");
+			}
+			else { 
+				$destino = " - Transferência de Material Permanente para Setor"; 
+			} ?>
+			<h1>Incluir Ítens <?php echo $destino; ?></h1>
 			<hr>
 		</div>
 		<div class="col-md-12 col-lg-12 col-xs-12 col-sm-12">
@@ -25,7 +31,7 @@
 							<?php
 						} 
 						else { ?>
-							<input type="hidden" name="consumo" id="consumo" value="0">
+							<input type="hidden" name="consumo" id="consumo" value="<?php echo ($cautela->distribuicao == 2) ? 1 : 0; ?>">
 							<?php
 						} ?>
 						<input type="hidden" name="estoques_id" id="estoques_id" value="<?php echo $cautela->origem_id; ?>">
@@ -45,6 +51,13 @@
 							<textarea id="tombos_produto" class="tombos-disp form-control" title="Lista de tombos disponíveis" disabled></textarea>
 						</div>
 					</div>
+					<!-- Quantidade -->
+					<div class="form-group">
+						<label for="quantidade_itens" class="col-xs-12 col-sm-12 col-md-2 col-lg-2 control-label">Quantidade</label>
+						<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
+							<input type="text" name="quantidade_itens" class="form-control" id="quantidade_itens" placeholder="Quantidade de Itens" title="Quantidade de itens" required>
+						</div>
+					</div>
 					<!-- Tombos -->
 					<div class="form-group" id="div_numero_tombo">
 						<label for="numero_tombo" class="col-sm-2 control-label">N° Tombo</label>
@@ -52,13 +65,6 @@
 							<textarea class="form-control" rows="5" name="numero_tombo" id="numero_tombo" placeholder="Número(s) de tombo" title="Os tombos (ex: 1000) ou intervalos (ex: 1000-1010) devem ser separados por vírgula"></textarea>
 							<h6>* Os tombos (ex: 1000) ou intervalos (ex: 1000-1010) devem ser separados por vírgula</h6>
 							<input type="hidden" name="distribuicao" id="distribuicao" value="<?php echo $cautela->distribuicao; ?>">
-						</div>
-					</div>
-					<!-- Quantidade -->
-					<div class="form-group">
-						<label for="quantidade_itens" class="col-xs-12 col-sm-12 col-md-2 col-lg-2 control-label">Quantidade</label>
-						<div class="col-xs-12 col-sm-12 col-md-2 col-lg-2">
-							<input type="text" name="quantidade_itens" class="form-control" id="quantidade_itens" placeholder="Quantidade de Itens" title="Quantidade de itens" required>
 						</div>
 					</div>
 					<!--<div class="form-group" id="tombamento">

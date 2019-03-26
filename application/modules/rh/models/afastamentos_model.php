@@ -19,27 +19,40 @@ class Afastamentos_model extends CI_Model {
 	}
 
 	public function salvar($data) {
-		$this->db->insert($this->table_name, $data);
+    if (is_array($data)) {
+      $tbl = (isset($data['tabela']))? array_shift($data) : $this->table_name;
+      $this->db->insert($tbl, $data);
+    }
 		return $this->db->insert_id();
 	}
 
 	public function atualizar($data) {
+    $tbl = (isset($data['tabela']))? array_shift($data) : $this->table_name;
 		$this->db->where('id', $data['id']);
-  	return $this->db->update($this->table_name, $data);
+  	return $this->db->update($tbl, $data);
 	}
 
-	public function excluir($id) {
+	public function excluir($data) {
+    if (is_array($data)) {
+      $tbl = $data['tabela'];
+      $id = $data['id'];
+    }
+    else {
+      $tbl = $this->table_name;
+      $id = $data;
+    }
 		$this->db->where('id', $id);
-    $this->db->delete($this->table_name);
+    $this->db->delete($tbl);
 	}
 		
 	# Retorna os afastamentos cadastados no sistema.
-	public function getById($id=NULL) {
+	public function getById($id=NULL, $tabela=NULL) {
+    $tbl = (is_null($tabela))? $this->table_name : $tabela;
 		if ($id==NULL) {
-      return $query = $this->db->get($this->table_name);
+      return $query = $this->db->get($tbl);
     } else {
       $this->db->where('id', $id);
-      return $this->db->get($this->table_name)->row(); 
+      return $this->db->get($tbl)->row(); 
     }
 	}
 

@@ -39,11 +39,12 @@ class Grupos extends MX_Controller {
 	}
 
 	public function excluir($id) {
+		$info_grupo = $this->clog_model>getByID('grupo_produtos', $id)->row();
 		$exclusao = $this->clog_model->excluir('grupo_produtos', $id);
 		if (! $exclusao) {
 			# Bloco de auditoria
 				$auditoria = array(
-									'auditoria'=>'Tentativa de excluir o grupo de produtos ID n° '.$id.', no sistema',
+									'auditoria'=>"Tentativa de excluir o grupo de produtos ID n° $id, <em>$info_grupo->nome</em>, no sistema",
 									'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 									'idmodulo'=>$this->session->userdata['sistema']
 								);
@@ -54,7 +55,7 @@ class Grupos extends MX_Controller {
 		else {
 			# Bloco de auditoria
 				$auditoria = array(
-									'auditoria'=>'Excluiu o grupo de produtos ID n° '.$id.', no sistema',
+									'auditoria'=>'Excluiu o grupo de produtos ID n° '.$id.', <em>$info_grupo->nome</em>, no sistema',
 									'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 									'idmodulo'=>$this->session->userdata['sistema']
 								);

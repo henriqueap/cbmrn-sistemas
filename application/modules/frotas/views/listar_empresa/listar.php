@@ -5,8 +5,8 @@
     	<div class="panel-body">
             <div class="row" >
             	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                    <a class="btn btn-sm  btn btn-sm btn-danger" title="Home" href="<?php echo base_url('frotas/index'); ?>"><span class="glyphicon glyphicon-arrow-up"></span></a>
-                    <a class="btn btn-sm  btn btn-sm btn-danger" title="Cadastrar Novo" href="<?php  echo base_url('frotas/empresa/cadastro'); ?>"><span class="glyphicon glyphicon-plus"></span></a>
+                    <a class="btn btn-sm  btn btn-sm btn-danger" title="Home" href="<?php echo base_url('index.php/frotas/index'); ?>"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                    <a class="btn btn-sm  btn btn-sm btn-danger" title="Cadastrar Novo" href="<?php  echo base_url('index.php/frotas/empresa/cadastro'); ?>"><span class="glyphicon glyphicon-plus"></span></a>
                     
                 </div>
             </div>
@@ -41,11 +41,11 @@
                                 <td><?php echo $contatos_empresa->nome; ?></td>
                                 <td><?php echo $contatos_empresa->telefone; ?></td>
                                 <td><?php echo $contatos_empresa->email; ?></td>
-                                <td><a title="Editar" class="btn btn-sm  btn btn-sm btn-default" href=" <?php echo base_url('frotas/listar_empresa/editar').'/'.$contatos_empresa->idempresa;?>"><span class="glyphicon glyphicon-edit"></span></a></td>
+                                <td><a title="Editar" class="btn btn-sm  btn btn-sm btn-default" href=" <?php echo base_url('index.php/frotas/listar_empresa/editar').'/'.$contatos_empresa->idempresa;?>"><span class="glyphicon glyphicon-edit"></span></a></td>
                                 <?php if($contatos_empresa->ativo==0){?>
-                                <td><a class="btn btn-sm  btn btn-sm btn-danger" title="Clique para ativar" href="<?php echo base_url('frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ban-circle"></span></a> </td>
+                                <td><a class="btn btn-sm  btn btn-sm btn-danger" title="Clique para ativar" href="<?php echo base_url('index.php/frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ban-circle"></span></a> </td>
 								<?php } else{?> 
-                                <td><a class="btn btn-sm  btn btn-sm btn-success" title="Clique para desativar" href="<?php echo base_url('frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ok-circle"></span></a> </td>
+                                <td><a class="btn btn-sm  btn btn-sm btn-success" title="Clique para desativar" href="<?php echo base_url('index.php/frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ok-circle"></span></a> </td>
                                 <?php } ?> 
                             </tr>
                             <?php endforeach;
@@ -64,8 +64,8 @@
             <div class="panel-body">
                 <div class="row" >
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <a class="btn btn-sm  btn btn-sm btn-danger" title="Home" href="<?php echo base_url('frotas/index'); ?>"><span class="glyphicon glyphicon-arrow-up"></span></a>
-                        <a class="btn btn-sm  btn btn-sm btn-danger" title="Cadastrar Novo" href="<?php  echo base_url('frotas/empresa/cadastro'); ?>"><span class="glyphicon glyphicon-plus"></span></a>
+                        <a class="btn btn-sm  btn btn-sm btn-danger" title="Home" href="<?php echo base_url('index.php/frotas/index'); ?>"><span class="glyphicon glyphicon-arrow-up"></span></a>
+                        <a class="btn btn-sm  btn btn-sm btn-danger" title="Cadastrar Novo" href="<?php  echo base_url('index.php/frotas/empresa/cadastro'); ?>"><span class="glyphicon glyphicon-plus"></span></a>
                         
                     </div>
                 </div>
@@ -95,11 +95,11 @@
                                     <td><?php echo $contatos_empresa->nome; ?></td>
                                     <td><?php echo $contatos_empresa->telefone; ?></td>
                                     <td><?php echo $contatos_empresa->email; ?></td>
-                                    <td><a title="Editar" class="btn btn-sm  btn btn-sm btn-default" href=" <?php echo base_url('frotas/listar_empresa/editar').'/'.$contatos_empresa->idempresa;?>"><span class="glyphicon glyphicon-edit"></span></a></td>
+                                    <td><a title="Editar" class="btn btn-sm  btn btn-sm btn-default" href=" <?php echo base_url('index.php/frotas/listar_empresa/editar').'/'.$contatos_empresa->idempresa;?>"><span class="glyphicon glyphicon-edit"></span></a></td>
                                     <?php if($contatos_empresa->ativo==0){?>
-                                    <td><a class="btn btn-sm  btn btn-sm btn-danger" title="Clique para ativar" href="<?php echo base_url('frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ban-circle"></span></a> </td>
+                                    <td><a class="btn btn-sm  btn btn-sm btn-danger" title="Clique para ativar" href="<?php echo base_url('index.php/frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ban-circle"></span></a> </td>
                                     <?php } else{?> 
-                                    <td><a class="btn btn-sm  btn btn-sm btn-success" title="Clique para desativar" href="<?php echo base_url('frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ok-circle"></span></a> </td>
+                                    <td><a class="btn btn-sm  btn btn-sm btn-success" title="Clique para desativar" href="<?php echo base_url('index.php/frotas/listar_empresa/atualizarAtivo').'/'.$contatos_empresa->idempresa;?>"><span  class="glyphicon glyphicon-ok-circle"></span></a> </td>
                                     <?php } ?> 
                                 </tr>
                                 <?php endforeach; ?>

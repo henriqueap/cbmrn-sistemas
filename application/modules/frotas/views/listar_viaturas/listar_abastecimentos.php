@@ -4,7 +4,7 @@
         <div class="panel-body">
              <div class="form-group"> 
              	<div class="col-sm-1 ">
-             		<a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('frotas/listar_viaturas/listar')?>" > <span></span></a>
+             		<a type="button" class="glyphicon glyphicon-chevron-left   btn btn-sm btn-danger" title="Voltar para lista de viaturas"  href="<?php echo base_url('index.php/frotas/listar_viaturas/listar')?>" > <span></span></a>
              	</div>
                  <form action="#" method="post" class="form-horizontal" role="form">
                  		<input name="inputIdViaturas" id="inputIdViaturas" type="hidden" value="<?php  echo $idViatura; ?>"/>
@@ -17,7 +17,7 @@
                             <input name="dataFinal" class="form-control" type="date" id="dataFinal" size="10" value="<?php echo date('Y-m-d')?>"/>
                         </div>
                         <button type="button" class="glyphicon glyphicon-ok btn btn-sm  btn btn-sm btn-danger" title="Aplicar Filtro" id="btn-buscar-filtro-abastecimento"><span></span></button>
-                        <a href="<?php echo base_url('frotas/listar_viaturas/listarAbastecimentos').'/'.$idViatura?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a>        
+                        <a href="<?php echo base_url('index.php/frotas/listar_viaturas/listarAbastecimentos').'/'.$idViatura?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a>        
 			    </form>  
              </div>
              <br/>

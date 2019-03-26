@@ -76,6 +76,13 @@ class Clog_model extends CI_Model {
 	}
 
 	#by Pereira
+	public function getAlmox() {
+		$this->db->where('almox', 1);
+		$query = $this->db->get('lotacoes');
+		$almox = ($query->num_rows() == 1)? $query->row() : FALSE;
+		# var_dump($almox); die();
+		return $almox;
+	}
 
 	public function getAll($tbl) {
 		$query = $this->db->get($tbl);
@@ -94,6 +101,19 @@ class Clog_model extends CI_Model {
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function getMilitar($id) {
+		$sql = "SELECT
+							militares.id,
+							CONCAT(patentes.sigla,' ',militares.nome_guerra) AS militar
+							FROM
+							militares
+							INNER JOIN patentes ON militares.patente_patentes_id = patentes.id
+							WHERE
+							militares.id = $id";
+		$query = $this->db->query($sql);							
+		return ($query->num_rows() > 0)? $query->row() : FALSE;
 	}
 
 	public function inserir($data, $tbl) {
@@ -280,15 +300,42 @@ class Clog_model extends CI_Model {
 			return FALSE;
 	}
 
-	public function getLotacoes() {
+	public function getLotacoes($id = NULL) {
 		$tbl = "lotacoes";
-		$this->db->where(array('sala'=> 0));
+		$id = (! $this->input->get('id'))? NULL : $this->input->get('id');
+		if (! is_null($id)) $whr['id'] = $id;
+		$whr['sala'] = 0;
+		$this->db->where($whr);
 		$query = $this->db->get($tbl);
 		if ($query->num_rows() > 0) {
 			return $query;
 		} else {
 			return FALSE;
 		}
+	}
+
+	public function getLotacoesInfo($id = NULL) {
+		$_sql = "SELECT
+							responsavel_lotacoes.id,
+							responsavel_lotacoes.lotacoes_id,
+							lotacoes.sigla,
+							lotacoes.nome,
+							lotacoes.sala,
+							responsavel_lotacoes.observacao,
+							CONCAT(patentes.sigla, ' ', militares.nome_guerra) AS responsavel,
+							responsavel_lotacoes.militares_id
+							FROM
+							lotacoes
+							LEFT JOIN responsavel_lotacoes ON responsavel_lotacoes.lotacoes_id = lotacoes.id
+							LEFT JOIN militares ON responsavel_lotacoes.militares_id = militares.id
+							INNER JOIN patentes ON militares.patente_patentes_id = patentes.id";
+		if (!is_null($id)) {
+			$_sql .= " WHERE responsavel_lotacoes.lotacoes_id = ";
+			$_sql .=  (is_array($id)) ? $id['id'] : "$id";
+		}
+		$_sql .= " ORDER BY lotacoes.sigla ASC";
+		$query = $this->db->query($_sql);
+		return ($query->num_rows() > 0)? $query : FALSE;
 	}
 
 	public function getLotacao($id) {
@@ -305,6 +352,12 @@ class Clog_model extends CI_Model {
 			}
 		} while (!is_null($id));
 		return $arvore;
+	}
+
+	public function is_sala($id) {
+		$params = array('id' => $id, 'sala' => 1);
+		$query = $this->db->get_where('lotacoes', $params);
+		return ($query->num_rows() > 0)? TRUE : FALSE;
 	}
 
 	public function getSalas($id = NULL) {
@@ -329,6 +382,39 @@ class Clog_model extends CI_Model {
 		return $query;
 	}
 
+	public function getPatrimonioSalas($id = NULL) {
+		$_sql = "SELECT
+							estoques.lotacoes_id,
+							lotacoes.sigla,
+							estoques.produtos_id,
+							produtos.modelo,
+							marcas_produtos.marca,
+							cautelas_has_produtos.tombo_id,
+							patrimonio.tombo,
+							cautelas_has_produtos.cautelas_id,
+							DATE_FORMAT(cautelas.data_cautela,'%d/%m/%Y') AS data_lancamento
+							FROM
+								estoques
+								INNER JOIN lotacoes ON estoques.lotacoes_id = lotacoes.id
+								INNER JOIN produtos ON estoques.produtos_id = produtos.id
+								INNER JOIN cautelas_has_produtos ON cautelas_has_produtos.produtos_id = produtos.id
+								INNER JOIN patrimonio ON cautelas_has_produtos.tombo_id = patrimonio.id
+								INNER JOIN cautelas ON cautelas_has_produtos.cautelas_id = cautelas.id AND estoques.lotacoes_id = cautelas.setor_id
+								INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+							WHERE
+								cautelas.cancelada = 0
+								AND cautelas.ativa = 1";
+		if (!is_null($id)) {
+			$_sql .= " AND estoques.lotacoes_id = ";
+			$_sql .= (is_array($id))? $id['id'] : "$id";
+			# var_dump($_sql); die();
+		}
+
+		# Retorno
+		$query = $this->db->query($_sql);
+		return ($query->num_rows() > 0)? $query : FALSE;
+	}
+
 	public function getEstoques() {
 		$sql = "SELECT DISTINCT
 							estoques.lotacoes_id,
@@ -336,7 +422,7 @@ class Clog_model extends CI_Model {
 							FROM
 								estoques
 								INNER JOIN lotacoes ON estoques.lotacoes_id = lotacoes.id
-							WHERE estoques.quantidade > 0";
+							WHERE lotacoes.sala = 0 AND estoques.quantidade > 0";
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0) {
 			return $query;
@@ -345,7 +431,9 @@ class Clog_model extends CI_Model {
 		}
 	}
 
-	public function getEstoque($id = 23) {
+	public function getEstoque() {
+		# Pegando o ID do Almoxarifado Principal
+		$id = $this->getAlmox(); 
 		$sql = "SELECT
 							produtos.id,
 							marcas_produtos.marca AS marcas,
@@ -382,7 +470,7 @@ class Clog_model extends CI_Model {
 
 	public function getAuditoria($params = NULL, $ini = NULL, $size = NULL) {
 		#$dtIni = date('Y')."-01-01"; # Checar com o Tenente
-		$dtIni = "2014-01-01"; # Temp
+		$dtIni = (date('Y')-1)."-01-01";
 		$dtFim = date('Y-m-d');
 		$filters = "\n WHERE (auditoria.idmodulo = 3)";
 		$order_by = '';
@@ -425,6 +513,10 @@ class Clog_model extends CI_Model {
 					$filters .= " AND (auditoria.idmilitar = $idmilitar)";
 				}
 				# .militar
+				# Filtrar por palavra-chave
+				$auditoria = (isset($params['auditoria']) && $params['auditoria'] != '') ? $params['auditoria'] : "";
+				$filters .= ($auditoria != '')? " AND (auditoria.auditoria LIKE '%$auditoria%')" : "";
+				# .palavra-chave
 				$sql .= $filters;
 			}
 		}
@@ -438,7 +530,7 @@ class Clog_model extends CI_Model {
 		# Quantidade de linhas
 		$sql .= (!is_null($size)) ? $limiter . $size : "";
 
-		#echo "<pre>"; var_dump($sql); echo "</pre>";
+		# echo "<pre>"; var_dump($sql); echo "</pre>";
 		# Executando a query
 		$lista = $this->db->query($sql);
 		if ($lista->num_rows() > 0)
@@ -456,17 +548,18 @@ class Clog_model extends CI_Model {
 		return $data;
 	}
 
-	public function povoaCLOG() {
+	public function povoaAlmoxMaster() {
+		$id = $this->getAlmox();
 		$produtos = $this->db->get('produtos');
 		foreach ($produtos->result() as $produto) {
 			# Atualizando o estoque
-			$controle = $this->db->get_where('estoques', array('lotacoes_id' => 23, 'produtos_id' => $produto->id));
+			$controle = $this->db->get_where('estoques', array('lotacoes_id' => $id, 'produtos_id' => $produto->id));
 			//echo "<pre> Controle: "; var_dump($controle->row()); echo "</pre>";
 			if ($controle->num_rows > 0) {
-				$this->db->where(array('lotacoes_id' => 23, 'produtos_id' => $produto->id));
+				$this->db->where(array('lotacoes_id' => $id, 'produtos_id' => $produto->id));
 				$this->db->update('estoques', array('quantidade' => $produto->quantidade_estoque));
 			} else
-				$this->db->insert('estoques', array('lotacoes_id' => 23, 'produtos_id' => $produto->id, 'quantidade' => $produto->quantidade_estoque));
+				$this->db->insert('estoques', array('lotacoes_id' => $id, 'produtos_id' => $produto->id, 'quantidade' => $produto->quantidade_estoque));
 		}
 	}
 

@@ -12,6 +12,12 @@ class Cautelas_model extends CI_Model {
 		$this->load->model(array('clog_model', 'produtos_model'));
 	}
 
+	public function getAlmox() {
+		$this->db->where('almox', 1);
+		$almox = $this->db->get('lotacoes')->row();
+		return (count($almox) > 0)? $almox->id : FALSE;
+	}
+
 	# Alterado por Pereira
 	public function validarTombo($tombo) {
 		# Testa se existe o tombo
@@ -56,6 +62,7 @@ class Cautelas_model extends CI_Model {
 								patrimonio.tombo,
 								patrimonio.produtos_id,
 								lotacoes.sigla AS setor,
+								lotacoes.sala,
 								CONCAT(patentes.sigla, ' ',militares.nome_guerra) AS militar,
 								militares.matricula
 								FROM
@@ -68,7 +75,7 @@ class Cautelas_model extends CI_Model {
 									INNER JOIN patrimonio ON patrimonio.id = cautelas_has_produtos.tombo_id
 									LEFT JOIN lotacoes ON cautelas.setor_id = lotacoes.id
 								WHERE
-									((cautelas.distribuicao = 0 AND cautelas.concluida = 0) OR (cautelas.distribuicao = 1)) AND
+									((cautelas.distribuicao = 0 AND cautelas.concluida = 0) OR (cautelas.distribuicao = 1) OR (cautelas.distribuicao = 2 AND lotacoes.sala = 1)) AND
 									cautelas.cancelada = 0 AND
 									cautelas.ativa = 1 AND
 									cautelas_has_produtos.tombo_id = $tombo_info->id
@@ -210,6 +217,7 @@ class Cautelas_model extends CI_Model {
 					$origem_atualizar = $origem->quantidade - $item_cautela->quantidade;
 					$this->db->where(array('lotacoes_id' => $info_cautela->origem_id, 'produtos_id' => $item_cautela->produtos_id));
 					$this->db->update('estoques', array('quantidade' => $origem_atualizar));
+					$err_count += ($this->db->affected_rows() < 1) ? 1 : 0;
 					# Atualizando destino
 					$destinoExists = $this->db->get_where('estoques', array('produtos_id'=>$item_cautela->produtos_id, 'lotacoes_id'=>$info_cautela->setor_id));
 					if (0 < $destinoExists->num_rows()) {
@@ -221,8 +229,9 @@ class Cautelas_model extends CI_Model {
 					else {
 						$this->db->insert('estoques', array('lotacoes_id' => $info_cautela->setor_id, 'produtos_id' => $item_cautela->produtos_id, 'quantidade'=>$item_cautela->quantidade));
 					}
+					$err_count += ($this->db->affected_rows() < 1) ? 1 : 0;
 					# Atualizando patrimônio
-					if (!is_null($item_cautela->tombo_id)) {
+					if (! is_null($item_cautela->tombo_id)) {
 						$this->db->where(array('id' => $item_cautela->tombo_id));
 						$this->db->update('patrimonio', array('estoques_id' => $info_cautela->setor_id));
 					}
@@ -235,13 +244,18 @@ class Cautelas_model extends CI_Model {
 	}
 
 	public function devolve_estoque($cautela_id) {
-		# $err_count = 0; # Contagem de erros
-		$produtos = Array();
-		$atualize = Array();
+		$err_count = 0; # Contagem de erros
 		$info_cautela = $this->getCautela($cautela_id)->row();
+		/*echo "<pre>";
+			var_dump($info_cautela);
+		echo "</pre>";*/
 		$itens_cautela = $this->getItens($cautela_id);
 		# Testando se existe itens para devolver
 		if (FALSE !== $itens_cautela) {
+			/*echo "<pre>";
+				var_dump($itens_cautela->result());
+			echo "</pre>";
+			die();*/
 			# Recuperando a quantidade do produto nos estoques, testando o estoque e criando os arrays de atualização
 			foreach ($itens_cautela->result() as $item_cautela) {
 				# Pegando o estoque de origem e calculando o novo estoque
@@ -250,113 +264,51 @@ class Cautelas_model extends CI_Model {
 				# Pegando o estoque de destino e calculando o novo estoque
 				$destino = $this->db->get_where('estoques', array('produtos_id'=>$item_cautela->produtos_id, 'lotacoes_id'=>$info_cautela->setor_id))->row();
 				$destino_atualizar = $destino->quantidade - $item_cautela->quantidade;
-				# Testando se dá estoque negativo no destino e guardando os produtos que deram problema
-				if ($destino_atualizar < 0) {
-					# Criando o array de produtos
-					$produtos[] = $item_cautela->produto;
-				}
-				# Tudo certo, cria os array de atualização
-				else {
-					# Destino
-					$atualize_destino[] = array(
-						'where' => array('lotacoes_id' => $info_cautela->setor_id, 'produtos_id' => $item_cautela->produtos_id),
-						'quantidade' => array('quantidade' => $destino_atualizar)
-					);
-					# Origem
-					$atualize_origem[] = array(
-						'where' => array('lotacoes_id' => $info_cautela->origem_id, 'produtos_id' => $item_cautela->produtos_id),
-						'quantidade' => array('quantidade' => $origem_atualizar)
-					);
-					# Patrimônio
-					if (!is_null($item_cautela->tombo_id)) {
-						$atualize_patrimonio[] = array(
-							'where' => array('id' => $item_cautela->tombo_id),
-							'estoque_id' => array('estoques_id' => $info_cautela->origem_id)
-						);
-					}
-				} 
-			}
-			# Se não houve problema de estoque negativo no destino, atualiza os dois estoques e dá retorno
-			if (count($produtos) < 1) {
-				$err_count = 0;
-				$i = count($atualize_destino) - 1;
-				# Tentando atualizar o destino
-				while ($i >= 0) {
-					$atualiza = $atualize_destino[$i];
-					# echo "<pre>"; var_dump($atualiza); echo "</pre>";
-					$this->db->where($atualiza['where']);
-					$this->db->update('estoques', $atualiza['quantidade']);
+				# Tentando atualizar destino
+				if ($destino_atualizar > -1) {
+					$this->db->where(array('lotacoes_id' => $info_cautela->setor_id, 'produtos_id' => $item_cautela->produtos_id));
+					$this->db->update('estoques', array('quantidade' => $destino_atualizar));
 					if ($this->db->affected_rows() < 1) {
-						$err_count += 1;
+						$err_count ++;
 					}
-					$i--;
-				}
-				# Testando se houve erro de atualização do destino e dando retorno
-				if ($err_count > 0) {
-					$retorno['status'] = FALSE;
-					$retorno['msg'] = "O sistema não conseguiu atualizar o estoque de $err_count produtos no destino!";
-					return $retorno;
-				}
-				# Se não houve erro no destino, tenta atualizar a origem e dá retorno
-				else{
-					$err_count = 0;
-					$i = count($atualize_origem) - 1;
-					# Tentando atualizar a origem
-					while ($i >= 0) {
-						$atualiza = $atualize_origem[$i];
-						$this->db->where($atualiza['where']);
-						$this->db->update('estoques', $atualiza['quantidade']);
-						if ($this->db->affected_rows() < 1) {
-							$err_count += 1;
-						}
-						$i--;
-					}
-					# Testando se houve erro de atualização da origem e dando retorno
-					if ($err_count > 0) {
-						$retorno['status'] = FALSE;
-						$retorno['msg'] = "O sistema não conseguiu atualizar o estoque de $err_count produtos na origem!";
-						return $retorno;
-					}
-					# Se não houve erro na origem, tenta atualizar o patrimônio e dá retorno
 					else {
-						$err_count = 0;
-						$i = count($atualize_patrimonio) - 1;
-						# Tentando atualizar o patrimônio
-						while ($i >= 0) {
-							$atualiza = $atualize_patrimonio[$i];
-							$this->db->where($atualiza['where']);
-							$this->db->update('patrimonio', $atualiza['estoque_id']);
-							if ($this->db->affected_rows() < 1) {
-								$err_count += 1;
+						# Atualizando origem
+						$this->db->where(array('lotacoes_id' => $info_cautela->origem_id, 'produtos_id' => $item_cautela->produtos_id));
+						$this->db->update('estoques', array('quantidade' => $origem_atualizar));
+						if ($this->db->affected_rows() > 0) {
+							if (! is_null($item_cautela->tombo_id)) {
+								$this->db->where(array('id' => $item_cautela->tombo_id));
+								$this->db->update('patrimonio', array('estoques_id' => $info_cautela->origem_id));
+								if ($this->db->affected_rows() < 1) {
+									$tombo[] = $item_cautela->tombo_id;
+									$err_count ++;
+								}
+								else {
+									$this->db->where(array('id' => $cautela_id));
+									$this->db->update('cautelas', array('ativa' => 0));
+								}
 							}
-							$i--;
 						}
-						# Testando se houve erro de atualização do patrimônio e dá retorno
-						if ($err_count > 0) {
-							$retorno['status'] = FALSE;
-							$retorno['msg'] = "O sistema não conseguiu atualizar a tabela patrimônio!";
-							return $retorno;
-						}
-						# Ciclo concluído sem erros, retorna true
-						else {
-							# Retorno
-							return TRUE;
-						}
+						# Tentando atualizar o tombo no patrimônio
+						else $err_count++;
 					}
 				}
+				else $err_count++;
 			}
-			# Se houve, dá retorno
-			else {
-				$listaProdutos = rtrim(implode($produtos, ", "), ", ");
+			# Testando se houve erro de atualização do destino e dando retorno
+			if ($err_count > 0) {
 				$retorno['status'] = FALSE;
-				$retorno['msg'] = "O sistema não conseguiu atualizar o estoque do(s) produto(s): $listaProdutos";
+				$retorno['msg'] = "$err_count erro(s). O sistema não conseguiu atualizar os estoques!";
 				return $retorno;
 			}
+			else return TRUE;
 		}
 		# Se cautela vazia, retorna false
 		else {
 			# Retorno
-			return TRUE;
+			$retorno['status'] = FALSE;
+			$retorno['msg'] = "Não existem itens nesta saída de material!";
+			return $retorno;
 		}
 	}
 
@@ -434,11 +386,46 @@ class Cautelas_model extends CI_Model {
 		else return FALSE;
 	}
 
+	public function transferencia_avulsa($params) {
+		$err_count = 0;
+		if (is_array($params)) {
+			$tombo = array_pop($params);
+			$this->db->insert('cautelas', $params);
+			if ($this->db->affected_rows() > 0) {
+				# Recuperando o ID da nova transferência
+				$cautelas_id = $this->db->insert_id();
+				# Incluindo o produto na nova transferência
+				$tombo_info = $this->getByTombo($tombo);
+				$product_params = array(
+					'cautelas_id' => $cautelas_id,
+					'produtos_id' => $tombo_info->produtos_id,
+					'produtos_qde' => 1,
+					'tombo_id' => $tombo_info->tombo_id,
+					'destino_id' => $params['salas_id']
+				);
+				$this->db->insert('cautelas_has_produtos', $product_params);
+				$err_count += ($this->db->affected_rows() == 0) ? 1 : 0;
+				# Retirando o produto do estoque
+				$err_count += (! $this->atualiza_estoques($cautelas_id)) ? 1 : 0;
+				# Alterando o estoque_id na tabela patrimônio
+				/*$this->db->where('id', $tombo_info->tombo_id);
+				$this->db->update('patrimonio', array('estoques_id'=>$params['setor_id']));
+				$err_count += ($this->db->affected_rows() == 0) ? 1 : 0;*/
+				# Testando se houve erro em alguma etapa
+				return ($err_count > 0) ? FALSE : TRUE;
+			}
+			else return FALSE;
+		}
+		else return FALSE;
+	}
+
 	public function getByTombo($tombo) {
 	 	$tmb = (is_array($tombo)) ? $tombo['tombo'] : $tombo;
+	 	var_dump($tmb);
 	 	$sql = "SELECT
 						 	patrimonio.id AS tombo_id,
 						 	patrimonio.tombo,
+						 	produtos.id AS produtos_id,
 						 	CONCAT(marcas_produtos.marca,' ',produtos.modelo) AS produto,
 						 	grupo_produtos.nome AS grupo,
 						 	patrimonio.notas_id
@@ -450,6 +437,7 @@ class Cautelas_model extends CI_Model {
 						 	WHERE patrimonio.tombo = '$tmb'";
 						 	#var_dump($sql);
 		$tombo_info = $this->db->query($sql);
+		var_dump($tombo_info->num_rows());
 		return ($tombo_info->num_rows() > 0) ? $tombo_info->row() : FALSE;
 	}
 
@@ -457,6 +445,7 @@ class Cautelas_model extends CI_Model {
 		$sql = "SELECT
 							patrimonio.id,
 							patrimonio.tombo,
+							produtos.id AS produtos_id,
 							marcas_produtos.marca,
 							produtos.modelo,
 							cautelas_has_produtos.cautelas_id,
@@ -502,12 +491,15 @@ class Cautelas_model extends CI_Model {
 								patrimonio.produtos_id,
 								CONCAT(marcas_produtos.marca,' ',produtos.modelo) AS modelo,
 								patrimonio.tombo,
-								patrimonio.id
+								patrimonio.id,
+								lotacoes.sigla AS setor_atual,
+								patrimonio.estoques_id
 								FROM
 									patrimonio
 									INNER JOIN cautelas_has_produtos ON cautelas_has_produtos.tombo_id = patrimonio.id
 									INNER JOIN produtos ON patrimonio.produtos_id = produtos.id
 									INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+									INNER JOIN lotacoes ON patrimonio.estoques_id = lotacoes.id
 								WHERE
 									cautelas_has_produtos.cautelas_id = $id";
 			$query = $this->db->query($sql);
@@ -519,7 +511,8 @@ class Cautelas_model extends CI_Model {
 	}
 
 	#Alterado por Pereira
-	public function getTombosProduto($produtos_id = NULL, $estoques_id = 23, $disp = TRUE) {
+	public function getTombosProduto($produtos_id = NULL, $estoques_id = NULL, $disp = TRUE) {
+		$estoques_id = $this->getAlmox();
 		$sql_all = "SELECT
 									patrimonio.tombo
 									FROM
@@ -696,11 +689,18 @@ class Cautelas_model extends CI_Model {
 							CONCAT(marcas_produtos.marca,' ',produtos.modelo) AS produto,
 							cautelas_has_produtos.produtos_qde AS quantidade,
 							cautelas_has_produtos.tombo_id,
-							cautelas_has_produtos.ativo
+							cautelas_has_produtos.ativo,
+							patrimonio.tombo,
+							cautelas.estoques_id AS origem_id,
+							cautelas.setor_id,
+							cautelas_has_produtos.destino_id,
+							patrimonio.estoques_id AS estoque_id
 							FROM
 								cautelas_has_produtos
+								INNER JOIN cautelas ON cautelas_has_produtos.cautelas_id = cautelas.id
 								INNER JOIN produtos ON cautelas_has_produtos.produtos_id = produtos.id
 								INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+								LEFT JOIN patrimonio ON cautelas_has_produtos.tombo_id = patrimonio.id
 							WHERE cautelas_has_produtos.cautelas_id = $cautela_id";
 		$query = $this->db->query($sql);
 		if ($query->num_rows() > 0) return $query;
@@ -968,6 +968,8 @@ class Cautelas_model extends CI_Model {
 				}
 				$sql .= " AND (cautelas.data_cautela BETWEEN '2014-06-01' AND '$dtFim')";
 			}
+			# Testando se é transferência para sala
+			$sql .= (isset($filter['sala']))? " AND (lotacoes.sala = '" . $filter['sala'] . "')": '';
 			# Fim do filtro de datas
 			# Filtro de concluídas
 			/* if (isset($filter['concluida'])) {

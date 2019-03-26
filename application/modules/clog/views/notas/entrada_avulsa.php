@@ -26,7 +26,7 @@
 											<?php 
 											if(!is_bool($setores)) {
 												foreach ($setores->result() as $setor): ?>
-													<option value="<?php echo $setor->id; ?>" <?php echo ($setor->id == 23)? "selected" : ""; ?>><?php echo $setor->sigla; ?></option>
+													<option value="<?php echo $setor->id; ?>" <?php echo ($setor->id == $almox)? "selected" : ""; ?>><?php echo $setor->sigla; ?></option>
 												<?php endforeach; 
 											} ?>
 									</select>

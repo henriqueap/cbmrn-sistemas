@@ -62,7 +62,7 @@
         
       <div class="col-lg-5 col-md-4 col-sm-4 col-xs-4">
         <center>
-          <a class="btn btn-danger" href="<?php echo base_url('frotas/index'); ?>" role="button">Home</a>
+          <a class="btn btn-danger" href="<?php echo base_url('index.php/frotas/index'); ?>" role="button">Home</a>
         </center>
       </div> 
       <div class="col-lg-1 col-md-1 col-sm-1 col-xs-1">

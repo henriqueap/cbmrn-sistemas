@@ -26,15 +26,17 @@
 					}
 					event.preventDefault();
 					audita = $.ajax({
-								url: BASE_URL + 'index.php/clog/filtrar_auditoria?page='+page,
-								type: 'POST',
-								dataType: 'html',
-								data: {
-								data_inicial: dtIni, 
-								data_final: dtFim,
-								tipo_auditoria: $("#tipo_auditoria").val(), 
-								militares_id: $("#militares_id").val()
-							}
+									url: BASE_URL + 'index.php/clog/filtrar_auditoria?page='+page,
+									type: 'POST',
+									dataType: 'html',
+									data: {
+										data_inicial: dtIni, 
+										data_final: dtFim,
+										tipo_auditoria: $("#tipo_auditoria").val(), 
+										militares_id: $("#militares_id").val(), 
+										auditoria: $("#auditoria").val(),
+										linhas: $("#linhas").val()
+									}
 						});
 							audita.done(function(result) {
 								$("#resultado_consulta").empty();

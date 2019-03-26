@@ -28,7 +28,7 @@ header('Content-Type: text/html; charset=UTF-8');
                             <input name="dataFinal" class="form-control" type="date" id="dataFinal"  value="<?php echo date('Y-m-d')?>" />
                         </div>
                         <button type="button" class="glyphicon glyphicon-ok btn btn-sm  btn btn-sm btn-danger" title="Aplicar Filtro" id="btn-buscar-filtro-concluidos"><span></span></button>
-                        <a href="<?php echo base_url('frotas/servicos_concluidos/listar')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
+                        <a href="<?php echo base_url('index.php/frotas/servicos_concluidos/listar')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
                     </form>
                 </div>
              </div>

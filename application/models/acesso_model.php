@@ -13,8 +13,7 @@ class Acesso_model extends CI_Model {
 		# $this->output->enable_profiler(TRUE);
 	}
 
-	public function search_module($id=NULL, $tabela=NULL) 
-	{
+	public function search_module($id=NULL, $tabela=NULL) {
 		# Pesquisar modulo.
 		if (!is_null($id)) 
 			$this->db->where('id', $id);
@@ -27,12 +26,19 @@ class Acesso_model extends CI_Model {
 		return $query;
 	}
 
-	public function consulta_militares() 
-	{
+	public function consulta_militares() {
+		/*echo "<pre>";
+			var_dump($this->load->database('cblab', TRUE));
+		echo "</pre>";*/
+		# $db_auth = $this->load->database('cblab', TRUE);
 		$data = array(  
 			'matricula'=>$this->input->post('matricula'), 
-			'senha'=>md5($this->input->post('senha'))
+			'senha'=>hash('sha512', $this->input->post('senha'))
 		);
+		/*$data = array(  
+			'matricula'=>$this->input->post('matricula'), 
+			'senha'=>md5($this->input->post('senha'))
+		);*/
 
 		$this->db->where('matricula', $data['matricula']);
 		$this->db->where('senha', $data['senha']);
@@ -40,17 +46,28 @@ class Acesso_model extends CI_Model {
 							militares.id,
 							militares.nome_guerra,
 							CONCAT(patentes.sigla,' ',militares.nome_guerra) AS militar,
-							militares.matricula
+							militares.matricula,
+							sala_salas_id as lotacao_id
 							FROM
 								militares
 								INNER JOIN patentes ON militares.patente_patentes_id = patentes.id
 								WHERE militares.matricula = '".$data['matricula']."' AND militares.senha = '".$data['senha']."'";
+		/*$sql = "SELECT
+							militar.idmilitar AS id,
+							militar.nome_guerra,
+							CONCAT(patente.sigla,' ',militar.nome_guerra) AS militar,
+							militar.matricula,
+							militar.idlotacao
+							FROM
+								militar
+								INNER JOIN patente ON militar.idpatente = patente.idpatente
+								WHERE militar.matricula = '".$data['matricula']."' AND militar.senha = '".$data['senha']."'";*/
+		//die($sql);
 		$query = $this->db->query($sql);
 		return $query;
 	}
 
-	public function consulta_modulos($data) 
-	{
+	public function consulta_modulos($data) {
 		# Consultar modulos.
 		$this->db->where('id', $data['sistema']);
 		$query = $this->db->get('modulos', 1);

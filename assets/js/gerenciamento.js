@@ -2,13 +2,14 @@ jQuery(function( $ ) {
 
 	//MÁSCARAS
 	$("input[rel='placa']").mask('***-9999');
-	$("input[rel='prefixo']").mask('*-99');
+	$("input[rel='prefixo']").mask('**-99');
 	$("input[rel='chassis']").mask('*****************');
-	$("input[rel='renavam']").mask('99999999-9');
+	$("input[rel='renavam']").mask('9999999999-9');
 	$("input[rel='matricula']").mask('999.999-9');
 	$("input[rel='data']").mask('99/99/9999');
 	$("input[rel='cpf']").mask('999.999.999-99');
 	$("input[rel='telefone']").mask('(99)9999-9999');
+	$("input[rel='celular']").mask('(99)99999-9999');
 	$("input[rel='cep']").mask('99999-999');
 	$("input[rel='cnpj']").mask('99.999.999/9999-99');
 	$("input[rel='preco']").maskMoney({prefix: 'R$ ', decimal: ',', precision: 2, allowNegative: false, thousands: '.', affixesStay: false});
@@ -41,7 +42,13 @@ jQuery(function( $ ) {
 	});
 
 	//Select2
+
 	$('#produtos').select2({
+		placeholder: "Selecione Produtos",
+		maximumSelectionSize: 1
+	});
+
+	$('#produtos_cautela').select2({
 		placeholder: "Selecione Produtos",
 		maximumSelectionSize: 1
 	});
@@ -57,7 +64,17 @@ jQuery(function( $ ) {
 	});
 
 	$('#grupo_produtos').select2({
-		placeholder: "Selecione Marca de Produtos",
+		placeholder: "Selecione o Grupo de Produtos",
+		maximumSelectionSize: 1
+	});
+
+	$('#militares_id').select2({
+		placeholder: "Selecione o Militar",
+		maximumSelectionSize: 1
+	});
+
+	$('#grupos_id').select2({
+		placeholder: "Selecione o Grupo de Permissões",
 		maximumSelectionSize: 1
 	});
 
@@ -93,6 +110,26 @@ jQuery(function( $ ) {
 	/**
 	 * Botões que ativam buscas em formulários!
 	 */
+	$("#bt_lista_solicitacoes").click(function () {
+		event.preventDefault();
+		var a=$(this);
+		var row=a.data('turma');
+		//row.attr('href', BASE_URL + 'index.php/rh/cursos/listar_solicitacoes?id=' + row);
+		consulta = $.ajax({
+			url: BASE_URL + 'index.php/rh/cursos/listar_solicitacoes',	
+			type: 'GET',
+			data: {
+				id: row
+			}
+		});
+		consulta.done(function (result) {
+			$("#militares_turma").html(result);
+		});
+		consulta.fail(function (result) {
+			alert('Consulta falhou, tente novamente mais tarde!');
+		});
+	});
+
 	$("#bt-buscar-sala").click(function () {
 		$.ajax({
 			type: 'get',
@@ -184,15 +221,15 @@ jQuery(function( $ ) {
 				matricula: $("#matricula").val()
 			}
 		})
-						.success(function (result) {
-							$("#result-search").html(result);
-						})
-						.fail(function () {
-							console.log("error");
-						})
-						.always(function () {
-							console.log("complete");
-						});
+			.success(function (result) {
+				$("#result-search").html(result);
+			})
+			.fail(function () {
+				console.log("error");
+			})
+			.always(function () {
+				console.log("complete");
+			});
 	});
 
 	//Filtro de dados em odometro
@@ -339,7 +376,7 @@ jQuery(function( $ ) {
 			url: BASE_URL + 'index.php/rh/ferias/get_militares_ferias',
 			data: {
 				exercicio: $("#exercicio").val(),
-				militar: $("#chefe_militares_id_hidden").val()
+				militar: $("#militar_id_hidden").val()
 			},
 			success: function (result) {
 				$("body").html(result);
@@ -348,6 +385,32 @@ jQuery(function( $ ) {
 				$("body").html(result);
 			}
 		});
+	});
+
+	// Função que faz consulta via ajax de militares cadastrados - Depois atualizar em outras páginas
+	$("#search-id-matricula").keyup(function () {
+		var matricula = $(this).val();
+		if (matricula.length == 9) {
+			//$("#nome_militar").html('<img src="http://192.168.0.6/sistemas/assets/img/ajax-loader.gif" />'); //Dev
+			$("#nome_militar").html('<img src="http://www2.defesasocial.rn.gov.br/cbmrn/new/assets/img/ajax-loader.gif" />'); //COINE
+			$.ajax({
+				type: 'get',
+				url: BASE_URL + 'index.php/rh/militares/getMilitarByMatricula',
+				dataType: 'json',
+				data: {
+					matricula: matricula
+				},
+				success: function (result) {
+					if (result.militar != "") {
+						$("#nome_militar").html(result.militar.nome);
+						$('#militar_id_hidden').val(result.militar.id);
+					} else {
+						$("#nome_militar").html("Militar não encontrado");
+						$("#militar_id").val("");
+					}
+				}
+			});
+		}
 	});
 
 	// Função que faz consulta via ajax de militares cadastrados.
@@ -468,18 +531,96 @@ jQuery(function( $ ) {
 		$("#autorizacaoModal").show();
 	});
 
+	$("#exercicio-ferias").change(function () {
+		$.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/rh/ferias/consultaDadosTurmas/',
+			data: {
+				exercicio: $("#exercicio-ferias").val()
+			},
+			success: function (result) {
+				$("#turmas").html(result);
+			}
+		});
+	});
+
+	// Frotas
+
+	$("#max-odometro").html("");
+	$("#max-odometro").hide();
 	$('#semViatura').hide();
 
 	$("#selViatura").change(function () {
-		var string = $("#selViatura").val();
-		var resultado = string.substr(-1, 1);
+		var opt_vtr = $("#selViatura").val();
+		var vtr_id = opt_vtr.split('-')[0];
+		var tipo_vtr = opt_vtr.split('-')[1];
+		$("#semViatura").show();
 
-		if (resultado == 2) {
+		//alert(tipo_vtr+'-'+vtr_id);
+
+		/*if (tipo_vtr == '2') {
 			$("#semViatura").show();
 		}
 		else {
 			$("#semViatura").hide();
-		}
+		}*/
+		
+		$.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/frotas/odometro/getMaxOdometro',
+			data: {
+				id: vtr_id
+			},
+			dataType: "html"
+		}).done(function(result) {
+			$("#max-odometro").html(result);
+			$("#max-odometro").show();
+		});
+
+		$.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/frotas/odometro/getInfoDestino',
+			data: {
+				id: vtr_id
+			},
+			dataType: "html"
+		}).done(function(result) {
+			$("#semViatura").show();
+			$("#semViatura").html(result);
+		});
+
+		/*$.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/frotas/odometro/getInfoDestino',
+			//url: "http://sistemascbm.rn.gov.br/sistemas/index.php/frotas/odometro/getInfoDestino",
+			data: {
+				id: vtr_id
+			},
+			success: function (result) {
+				$("#semViatura").show();
+				$("#semViatura").html(result);
+				/*$("#inputDestino").prop( "disabled", true)
+				if (! result) {
+					$("#inputDestino").prop( "disabled", false)
+				}
+			}
+		});*/
+	});
+
+	$("#selSetorVtr").change(function () {
+		var lotacoes_id = $("#selSetorVtr").val();
+		
+		tag = $.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/frotas/abastecimento/loadVtrSetor',
+			data: {
+				id: lotacoes_id
+			}
+		});
+		tag.done(function (result) {
+			$("#seletor_viaturas").empty();
+			$("#seletor_viaturas").html(result);
+		});
 	});
 
 	$('#dadosEndereco').hide();
@@ -528,19 +669,6 @@ jQuery(function( $ ) {
 			$('#dadosEndereco').hide();
 			$('#loader').hide();
 		}
-	});
-
-	$("#exercicio-ferias").change(function () {
-		$.ajax({
-			type: 'get',
-			url: BASE_URL + 'index.php/rh/ferias/consultaDadosTurmas/',
-			data: {
-				exercicio: $("#exercicio-ferias").val()
-			},
-			success: function (result) {
-				$("#turmas").html(result);
-			}
-		});
 	});
 
 	$("#selMarca").change(function () {
@@ -595,6 +723,25 @@ jQuery(function( $ ) {
 				modelo: $("#modelo").val(),
 				marcas: $("#marcas_produtos_id").val(),
 				almox: $("#lotacoes_id").val(),
+				tipo: $("#tipo_produto").val(),
+				grupo_produtos: $("#grupo_produtos").val(),
+				zerados: $("#zerados").prop( "checked" )
+			},
+			success: function (result) {
+				$("#result-search").html(result);
+			}
+		});
+	});
+
+	$("#lista-produtos-estoque").click(function (event) {
+		$.ajax({
+			url: BASE_URL + 'index.php/clog/produtos/lista_produtos_estoque/',
+			type: 'GET',
+			data: {
+				modelo: $("#modelo").val(),
+				marcas: $("#marcas_produtos_id").val(),
+				almox: $("#lotacoes_id").val(),
+				tipo: $("#tipo_produto").val(),
 				zerados: $("#zerados").prop( "checked" )
 			},
 			success: function (result) {
@@ -667,7 +814,12 @@ jQuery(function( $ ) {
 					if (result.tombo && result.tombo.modelo != undefined && result.tombo.marca != undefined) {
 						produto_info = result.tombo.modelo + " " + result.tombo.marca;
 						if (result.tombo.setor != null) {
-							produto_info += ": No estoque do " + result.tombo.setor + ". Disponível";
+							if (result.tombo.sala == 1) {
+								produto_info += ": Transferido para a sala "+ result.tombo.setor +", conforme Transferência nº " + result.tombo.cautelas_id + ". Indisponível";
+							}
+							else {
+								produto_info += ": No estoque do " + result.tombo.setor + ". Disponível";
+							}
 						}
 						if (result.tombo && result.tombo.cautelas_id != undefined) {
 							$("#distro_id").val(result.tombo.cautelas_id);
@@ -748,7 +900,7 @@ jQuery(function( $ ) {
 	$("#produtos_cautela").change(function () {
 		if ($("#consumo").val() == 1) {
 			// Mostra a div para incluir os tombos
-			//$("#div_numero_tombo").show();
+			$("#div_numero_tombo").show();
 			// AJAX dos Tombos
 			retorno = $.ajax({
 				type: 'get',
@@ -784,6 +936,22 @@ jQuery(function( $ ) {
 			$("#tombos-disp").hide();
 			$("#div_numero_tombo").hide();
 		}
+	});
+
+	$("#setores_patrimonio").change(function () {
+		// Incluído por Pereira
+		salas = $.ajax({
+			type: 'get',
+			url: BASE_URL + 'index.php/clog/cautelas/listaSalas',
+			dataType: 'html',
+			data: {
+				id: $("#setores_patrimonio").val()
+			}
+		});
+		salas.done(function (result) {
+			$("#salas").html(result);
+		});
+		// .Pereira
 	});
 	// .Pereira
 
@@ -945,7 +1113,9 @@ jQuery(function( $ ) {
 				data_inicial: dtIni,
 				data_final: dtFim,
 				tipo_auditoria: $("#tipo_auditoria").val(),
-				militares_id: $("#militares_id").val()
+				militares_id: $("#militares_id").val(),
+				auditoria: $("#auditoria").val(),
+				linhas: $("#linhas").val()
 			}
 		});
 		audita.done(function (result) {
@@ -1021,9 +1191,9 @@ jQuery(function( $ ) {
 	});
 
 	$("#modal-hist-prod").on('hidden.bs.modal', function (e) {
-    e.preventDefault();
-    location.reload();
-  });
+		e.preventDefault();
+		location.reload();
+	});
 
 	// Paginação
 	$("#pagination").twbsPagination({
@@ -1107,6 +1277,7 @@ jQuery(function( $ ) {
 				alert('Consulta falhou, tente novamente mais tarde!');
 		});
 	}); //Ok! - Pereira
+
 }); // Função Principal.
 
 //MODAIS - Pereira
@@ -1143,6 +1314,16 @@ function confirmarDesativarTipoMarca(url) {
 
 // Função que exibe Modal de confirmação.
 function confirmarReativarTipoMarca(url) {
+	$("#bt-modal-confirmar-reativar").attr('href', url);
+}
+
+// Função que exibe Modal de confirmação.
+function confirmarDesativarTipoOdometro(url) {
+	$("#bt-modal-confirmar-desativar").attr('href', url);
+}
+
+// Função que exibe Modal de confirmação.
+function confirmarReativarTipoOdometro(url) {
 	$("#bt-modal-confirmar-reativar").attr('href', url);
 }
 

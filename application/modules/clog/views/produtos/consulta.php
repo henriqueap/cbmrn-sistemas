@@ -17,7 +17,7 @@
 						<div class="form-group">
 							<label for="marcas_produtos_id" class="col-sm-2 control-label">Marca</label>
 							<div class="col-sm-12 col-md-5 col-lg-5 col-xs-12">
-								<select name="marcas_produtos_id" class="form-control" id="marcas_produtos_id">
+								<select  name="marcas_produtos_id" class="form-control" id="marcas_produtos_id">
 									<option value="">Selecione o Marca de Produtos</option>
 									<?php foreach($marcas_produtos as $marcas_produtos): ?>
 									<option value="<?php echo $marcas_produtos->id; ?>"><?php echo $marcas_produtos->marca; ?></option>

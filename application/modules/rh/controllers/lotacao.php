@@ -22,7 +22,7 @@ class Lotacao extends MX_Controller {
 
 	public function cadastro($data = "") {
 		# Exibe a página para cadastro de lotações no organograma.
-		$lista_subordinados = $this->lotacao_model->getById();
+		$lista_subordinados = $this->lotacao_model->getLotacoes();
 		$conteudo = $this->load->view('lotacao/cadastro', array('data' => $data, 'lista_subordinados'=>$lista_subordinados), TRUE);
 		$this->load->view('layout/index', array('layout' => $conteudo), FALSE);
 	}
@@ -49,7 +49,7 @@ class Lotacao extends MX_Controller {
 		# Method respónsavel por salvar dados no organograma.
 		if ($this->input->server('REQUEST_METHOD')  === 'POST') {
 			$this->form_validation->set_rules('nome', 'Seção', 'required|max_length[80]');
-			$this->form_validation->set_rules('sigla', 'Sigla', 'required|max_length[10]');
+			$this->form_validation->set_rules('sigla', 'Sigla', 'required|max_length[20]');
 			$this->form_validation->set_rules('id_secao_superior', 'seção subordinada', 'required');
 
 			if ($this->form_validation->run() === FALSE) {

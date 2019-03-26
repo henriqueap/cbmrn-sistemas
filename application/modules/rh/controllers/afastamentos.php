@@ -35,8 +35,23 @@ class Afastamentos extends MX_Controller {
 	}
 
 	/**
+	 * @param $data
+	 * Exibir página para cadastro de afastamentos.
+	 */
+	public function cadastro_tipo($data="") {
+		# Listar tipo de afastamentos.
+		$listar_afastamentos = $this->afastamentos_model->getByIdAfastamentos();
+		# Carregando variáveis
+		$vars = array('listar_afastamentos'=>$listar_afastamentos);
+		if (! empty($data)) $vars['data'] = $data;
+		# Exibir página para cadastrar/editar tipos de afastamentos.
+		$conteudo = $this->load->view('afastamentos/cadastro_tipo', $vars, TRUE);
+		$this->load->view('layout/index', array('layout'=>$conteudo), FALSE);
+	}
+
+	/**
 	 * @param empty
-	 * Exibi página de consulta.
+	 * Exibe página de consulta.
 	 */
 	public function consulta() {
 		# Listagem de todos os tipos de afastamentos.
@@ -44,6 +59,19 @@ class Afastamentos extends MX_Controller {
 
 		# Exibir página consulta de afastamentos.
 		$conteudo = $this->load->view('afastamentos/consulta', array('tipo_afastamentos'=>$tipo_afastamentos), TRUE);
+		$this->load->view('layout/index', array('layout'=>$conteudo), FALSE);
+	}
+
+	/**
+	 * @param empty
+	 * Exibe página de consulta.
+	 */
+	public function consulta_tipo() {
+		# Listagem de todos os tipos de afastamentos.
+		$tipo_afastamentos = $this->afastamentos_model->getByIdAfastamentos();
+
+		# Exibir página consulta de afastamentos.
+		$conteudo = $this->load->view('afastamentos/consulta_tipo', array('tipo_afastamentos'=>$tipo_afastamentos), TRUE);
 		$this->load->view('layout/index', array('layout'=>$conteudo), FALSE);
 	}
 
@@ -96,7 +124,52 @@ class Afastamentos extends MX_Controller {
         }
 
         # Redirecionamento Final da Página.
-        redirect('rh/afastamentos/consulta/');
+        redirect('rh/afastamentos/cadastro/');
+			}
+		}
+	}
+
+	public function salvar_tipo() { 
+		# Método responsável por salvar os tipos de afastamentos
+		if ($this->input->server('REQUEST_METHOD')  === 'POST') {
+			$this->form_validation->set_rules('nome', 'Tipo de Afastamento', 'required');
+			$this->form_validation->set_rules('dias', 'Dias', 'required');
+
+			if ($this->form_validation->run() === FALSE) {
+				$tipo_afastamentos = $this->afastamentos_model->getByIdAfastamentos();
+				$conteudo = $this->load->view('afastamentos/cadastro_tipo', array('tipo_afastamentos'=>$tipo_afastamentos), TRUE);
+				$this->load->view('layout/index', array('layout'=>$conteudo), FALSE);
+			} else {
+					$data = array(
+						'tabela'=>'tipo_afastamentos',
+						'id'=>$this->input->post('id'),
+						'nome'=>$this->input->post('nome'), 
+						'dias'=>$this->input->post('dias')
+					); 
+
+					if (empty($data['id'])) { 
+						if ($this->afastamentos_model->salvar($data)) {
+							$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Cadastrado com sucesso!'));
+						} else {
+							$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao cadastrar!'));
+						}
+					} else {
+							# Variável usada para debugar o envio de dados pelo method POST.
+							# $debug="";
+							if (isset($debug)) {
+								print "<pre>";
+									var_dump($data);
+								print "</pre>";
+							}
+
+							if ($this->afastamentos_model->atualizar($data)) {
+								$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => 'Atualizado com sucesso!'));
+							} else {
+								$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => 'Erro ao atualizar!'));
+							}
+					}
+
+				redirect('rh/afastamentos/cadastro_tipo/'); 
 			}
 		}
 	}
@@ -112,11 +185,32 @@ class Afastamentos extends MX_Controller {
 
 	/**
 	 * @param int $id
+	 * Pega minformações que iram ser enviadas via parâmetro no method cadastro da mesma classe. 
+	 */
+	public function editar_tipo($id) {
+		$data = $this->afastamentos_model->getById($id, 'tipo_afastamentos');
+		#var_dump($data); die();
+		$this->cadastro_tipo($data);
+	}
+
+	/**
+	 * @param int $id
 	 * Excluí o afastamentos pelo id na tabela.
 	 */
 	public function excluir($id) {
-		$this->afastamentos_model->excluir($id);
+		$data = array('tabela'=>'tipo_afastamentos', 'id' => $id);
+		$this->afastamentos_model->excluir($data);
 		redirect('rh/afastamentos/consulta/');
+	}
+
+	/**
+	 * @param int $id
+	 * Excluí o afastamentos pelo id na tabela.
+	 */
+	public function excluir_tipo($id) {
+		$data = array('tabela'=>'tipo_afastamentos', 'id' => $id);
+		$this->afastamentos_model->excluir($data);
+		redirect('rh/afastamentos/cadastro_tipo/');
 	}
 	
 	public function consulta_afastamentos() {

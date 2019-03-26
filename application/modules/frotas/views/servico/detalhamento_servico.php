@@ -76,7 +76,7 @@
             <div class="row ">
                 <div class="col-lg-4 col-md-4 col-xs-4">
                 </br></br>
-                    <a href="<?php echo base_url('frotas/servicos_pendentes/concluirServico').'/'.$detalhamento->idServico?>" class="btn btn-danger ">Concluir Serviço</a>
+                    <a href="<?php echo base_url('index.php/frotas/servicos_pendentes/concluirServico').'/'.$detalhamento->idServico?>" class="btn btn-danger ">Concluir Serviço</a>
                 </div>    
             </div>   
         <?php }?>

@@ -18,7 +18,7 @@
 <?php echo $layout; ?>
 
 <script type="text/javascript" charset="utf-8" src="<?php echo base_url('assets/js/jquery.min.js');?>"></script>
-<script type="text/javascript" charset="utf-8" src="<?php echo base_url('assets/js/bootstrap.js');?>"></script>
+<script type="text/javascript" charset="utf-8" src="<?php echo base_url('assets/js/bootstrap.min.js');?>"></script>
 <script type="text/javascript" charset="utf-8" src="<?php echo base_url('assets/js/jquery.maskedinput.min.js'); ?>"></script>
 <script type="text/javascript" charset="utf-8" src="<?php echo base_url('assets/js/gerenciamento.js'); ?>"></script>
 </body>

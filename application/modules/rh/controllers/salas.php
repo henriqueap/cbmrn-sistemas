@@ -12,8 +12,7 @@ class Salas extends MX_Controller {
 
 	function __construct() {
 		parent::__construct();
-		$this->load->model('salas_model');
-		$this->load->model('lotacao_model');
+		$this->load->model(array('salas_model', 'lotacao_model'));
 		# $this->output->enable_profiler(TRUE);
 	}
 
@@ -25,7 +24,7 @@ class Salas extends MX_Controller {
 		# Pega o array com os dados!
 		$array = array(
 			'data' => $data, 
-			'secoes'=>$this->lotacao_model->getById()
+			'secoes'=>$this->lotacao_model->getLotacoes()
 		);
 
 		$conteudo = $this->load->view('salas/cadastro', $array, TRUE);
@@ -43,7 +42,7 @@ class Salas extends MX_Controller {
 				$data = array(
 					'id' => $this->input->post('id'),
 					'nome' => $this->input->post('nome'), 
-					'lotacoes_id'=>$this->input->post('id_secao_superior')
+					'superior_id'=>$this->input->post('id_secao_superior')
 				);
 
 				if ($this->input->post('chefe_militares_id') != "") {

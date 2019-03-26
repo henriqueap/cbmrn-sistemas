@@ -29,18 +29,19 @@ class Produtos_model extends CI_Model {
 		$this->db->join('lotacoes', 'estoques.lotacoes_id = lotacoes.id');
 		// Filtros inteligentes
 		if (isset($filter['tipo']))
-			$this->db->like('produtos.consumo', $filter['tipo']);
+			$this->db->where('produtos.consumo', $filter['tipo']);
 		if (isset($filter['modelo']))
-			$this->db->like('produtos.modelo', $filter['modelo']);
+			$this->db->where('produtos.modelo', $filter['modelo']);
 		if (isset($filter['marcas_produtos_id']))
-			$this->db->like('produtos.marcas_produtos_id', $filter['marcas_produtos_id']);
+			$this->db->where('produtos.marcas_produtos_id', $filter['marcas_produtos_id']);
 		if (isset($filter['grupo_produtos_id']))
-			$this->db->like('grupo_produtos.id', $filter['grupo_produtos_id']);
+			$this->db->where('grupo_produtos.id', $filter['grupo_produtos_id']);
 		if (isset($filter['lotacoes_id']))
-			$this->db->like('estoques.lotacoes_id', $filter['lotacoes_id']);
+			$this->db->where('estoques.lotacoes_id', $filter['lotacoes_id']);
 		if (isset($filter['zerados']))
 			$this->db->where('estoques.quantidade >', 0);
 
+		$this->db->order_by('produtos.modelo', 'ASC');
 		$query = $this->db->get();
 		return $query;
 	}
@@ -172,7 +173,7 @@ class Produtos_model extends CI_Model {
 		$sql = "SELECT
 							produtos.id,
 							produtos.quantidade_minima,
-							SUM(estoques.quantidade) as quantidade_estoque,
+							SUM(estoques.quantidade) AS quantidade_estoque,
 							produtos.modelo,
 							produtos.consumo,
 							produtos.grupo_produtos_id,
@@ -185,8 +186,9 @@ class Produtos_model extends CI_Model {
 								INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
 								INNER JOIN grupo_produtos ON produtos.grupo_produtos_id = grupo_produtos.id
 								INNER JOIN estoques ON estoques.produtos_id = produtos.id
+								INNER JOIN lotacoes ON estoques.lotacoes_id = lotacoes.id
 							WHERE
-								produtos.id = $id";
+								lotacoes.sala = 0 AND produtos.id = $id ";
 		$query = $this->db->query($sql);
 		return $query;
 	}
@@ -229,6 +231,7 @@ class Produtos_model extends CI_Model {
 								grupo_produtos.nome AS grupo,
 								cautelas_has_produtos.cautelas_id,
 								DATE_FORMAT(cautelas.data_cautela, '%d/%m/%Y') AS dia,
+								DATE_FORMAT(cautelas.data_conclusao, '%d/%m/%Y') AS devolvido,
 								CONCAT(patentes.sigla, ' ', militares.nome_guerra) AS militar,
 								cautelas.setor_id,
 								almoxarifado.sigla AS almoxarifado,
@@ -236,7 +239,9 @@ class Produtos_model extends CI_Model {
 								destino.sigla AS destino,
 								cautelas_has_produtos.destino_id,
 								cautelas_has_produtos.ativo,
-								cautelas.distribuicao
+								cautelas.distribuicao,
+								cautelas.concluida,
+								cautelas.ativa
 								FROM
 									cautelas_has_produtos
 									INNER JOIN patrimonio ON cautelas_has_produtos.tombo_id = patrimonio.id
@@ -251,7 +256,6 @@ class Produtos_model extends CI_Model {
 									LEFT JOIN lotacoes ON lotacoes.id = cautelas.setor_id
 								WHERE
 									(cautelas.cancelada = 0)
-									AND (cautelas.ativa = 1)
 									AND (patrimonio.tombo = '$tombo')";
 			$_ord = " ORDER BY cautelas_has_produtos.cautelas_id DESC";
 			$query = $this->db->query($_sql . $_ord);

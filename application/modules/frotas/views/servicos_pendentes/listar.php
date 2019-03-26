@@ -23,7 +23,7 @@
         <div class="panel-body">
             <div class="row">  
                 <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"> 
-                     <a type="button"  class="btn btn-danger" href="<?php echo base_url('frotas/index')?>"  >Home</a>  
+                     <a type="button"  class="btn btn-danger" href="<?php echo base_url('index.php/frotas/index')?>"  >Home</a>  
                 </div>
                 
                     <div class="form-group">
@@ -36,7 +36,7 @@
                             <input type="date" class="form-control" name="dataFinal" id="dataFinal"  placeholder="" required>
                         </div>
                             <button type="button" class="glyphicon glyphicon-ok btn btn-sm  btn btn-sm btn-danger" title="Aplicar Filtro" id="btn-buscar-filtro-pendentes"><span></span></button>
-                            <a href="<?php echo base_url('frotas/servicos_pendentes/listar')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
+                            <a href="<?php echo base_url('index.php/frotas/servicos_pendentes/listar')?>"  class="glyphicon glyphicon-remove btn btn-sm  btn btn-sm btn-danger" title="Remover Filtro"><span></span></a> 
                       </form>
                     </div>
                     </br>
@@ -79,15 +79,15 @@
                                     <td><?php echo $lista->statusDescricao; ?></td>
                                     <td>
                                     <?php  if ($lista->situacao_id != 6 && $lista->retroativo == 0) {?> 
-                                        <a type="button" data-toggle="modal" data-target="#myModal-Cancelado" class="btn btn-default btn-xs" onclick="confirmarCancelarServico('<?php echo base_url('frotas/servicos_pendentes/atualizarStatusCancelado').'/'.$lista->idServico;?>')">
+                                        <a type="button" data-toggle="modal" data-target="#myModal-Cancelado" class="btn btn-default btn-xs" onclick="confirmarCancelarServico('<?php echo base_url('index.php/frotas/servicos_pendentes/atualizarStatusCancelado').'/'.$lista->idServico;?>')">
                                             <span title="Cancelar Serviço" class="glyphicon glyphicon-remove"></span>
                                         </a>
                                         <?php  if ($lista->situacao_id >= 2 ) {?>
-                                        <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
+                                        <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
                                             <span  class="glyphicon glyphicon-plus"></span>
                                         </a>
                                         <?php }if ($lista->autorizado == 1 && $lista->situacao_id == 2) {?> 
-                                            <a title="Executar Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/execucaoServico').'/'.$lista->idServico;?>" >
+                                            <a title="Executar Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/execucaoServico').'/'.$lista->idServico;?>" >
                                              <span  class="glyphicon glyphicon-play"></span>
                                             </a>
                                         <?php }?>
@@ -99,7 +99,7 @@
                                             </a>
                                     <?php }
                                         }else{?>
-                                            <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
+                                            <a title="Detalhamento Serviço" class="btn btn-default btn-xs" href="<?php echo base_url('index.php/frotas/servicos_pendentes/detalhamento').'/'.$lista->idServico;?>" >
                                                 <span  class="glyphicon glyphicon-plus"></span>
                                             </a>
                                       <?php  } ?>

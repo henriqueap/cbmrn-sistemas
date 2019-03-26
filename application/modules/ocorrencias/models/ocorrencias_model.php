@@ -267,7 +267,8 @@ class Ocorrencias_model extends CI_Model
     }
     /*echo "<pre>";
       var_dump($_data);
-    echo "</pre>"; */
+    echo "</pre>"; 
+	die();*/
     return $_data;
   }
 

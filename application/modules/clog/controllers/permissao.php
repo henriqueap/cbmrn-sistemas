@@ -59,16 +59,18 @@ class Permissao extends MX_Controller {
 			}*/
 
 			$data = array(
-					#'modulos_id'=>$this->input->post('modulos_id'),
-					'id'=>$this->input->post('grupo_id'),
-					'nome'=>$this->input->post('grupo_nome')
+				#'modulos_id'=>$this->input->post('modulos_id'),
+				'id'=>$this->input->post('grupo_id'),
+				'nome'=>$this->input->post('grupo_nome')
 			);
+			
 			if ($this->input->post('grupo_id') != '') {
+				$info_grupo = $this->clog_model->getByID('grupos_permissoes', $data['id'])->row();
 				$query = $this->clog_model->atualizar('grupos_permissoes', $data);
 				if ($query === TRUE) {
 					# Bloco de auditoria
 						$auditoria = array(
-							'auditoria'=>'Alterou o nome do grupo de permissões nº '.$this->input->post('grupo_id').' para <em>'.$data['nome'].'</em>',
+							'auditoria'=>"Alterou o nome do grupo de permissões nº $this->input->post('grupo_id'), <em>$info_grupo->nome</em>, para <em>".$data['nome']."</em>",
 							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo'=>$this->session->userdata['sistema']
 						);
@@ -79,7 +81,7 @@ class Permissao extends MX_Controller {
 				else {
 					# Bloco de auditoria
 						$auditoria = array(
-							'auditoria'=>'Tentativa de alterar o nome do grupo de permissões nº '.$this->input->post('grupo_id').' para <em>'.$data['nome'].'</em>',
+							'auditoria'=>"Tentativa de alterar o nome do grupo de permissões nº $this->input->post('grupo_id'), <em>$info_grupo->nome</em>, para <em>".$data['nome']."</em>",
 							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo'=>$this->session->userdata['sistema']
 						);
@@ -93,7 +95,7 @@ class Permissao extends MX_Controller {
 				if ($query === TRUE) {
 					# Bloco de auditoria
 						$auditoria = array(
-							'auditoria'=>'Incluiu um novo grupo de permissões no sistema',
+							'auditoria'=>'Incluiu o novo grupo de permissões no sistema',
 							'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo'=>$this->session->userdata['sistema']
 						);
@@ -301,8 +303,12 @@ class Permissao extends MX_Controller {
 					$query = $this->clog_model->inserir($data, 'grupos_permissoes_permissoes');
 					if ($query === TRUE) {
 						# Bloco de auditoria
+							$testPerm = $this->clog_model->getByID('permissoes', $data['permissoes_id']);
+							$testGroup = $this->clog_model->getByID('grupos_permissoes', $data['grupos_permissoes_id']);
+							$permAudit = ($testPerm !== FALSE)? $testPerm->row() : "";
+							$groupAudit =($testGroup !== FALSE)? $testGroup->row() : "";
 							$auditoria = array(
-												'auditoria'=>'Associou a permissão ID '.$data['permissoes_id'].' ao grupo ID '.$data['grupos_permissoes_id'],
+												'auditoria'=>"Associou a permissão <em>$permAudit->nome</em> ao grupo <em>$groupAudit->nome</em>",
 												'idmilitar'=>$this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 												'idmodulo'=>$this->session->userdata['sistema']
 											);

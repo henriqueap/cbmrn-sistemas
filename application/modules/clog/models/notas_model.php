@@ -7,17 +7,42 @@ class Notas_model extends CI_Model {
 		$this->load->database();
 	}
 
-	public function dados_notas() {
-		# Salvar primeiros dados da nota fiscal.
-		$data = array(
-				'numero' => $this->input->post('numero'),
-				'empresas_id' => $this->input->post('empresas_id'),
-				'tipo' => $this->input->post('tipo_nota_fiscal'),
-				'data' => $this->clog_model->formataData($this->input->post('data'))
-		);
+	public function getAlmox() {
+		$this->db->where('almox', 1);
+		$almox = $this->db->get('lotacoes')->row();
+		return (count($almox) > 0)? $almox->id : FALSE;
+	}
 
-		$this->db->insert('notas_fiscais', $data);
-		return $this->db->insert_id();
+	public function dados_notas($id = NULL) {
+		if (is_null($id)) {
+			# Salvar primeiros dados da nota fiscal.
+			$data = array(
+					'numero' => $this->input->post('numero'),
+					'empresas_id' => $this->input->post('empresas_id'),
+					'tipo' => $this->input->post('tipo_nota_fiscal'),
+					'data' => $this->clog_model->formataData($this->input->post('data'))
+			);
+
+			$this->db->insert('notas_fiscais', $data);
+			return $this->db->insert_id();
+		}
+		else {
+			$_sql = "SELECT
+								notas_fiscais.id,
+								notas_fiscais.numero,
+								notas_fiscais.data,
+								notas_fiscais.valor,
+								empresas.nome_fantasia AS empresa,
+								notas_fiscais.concluido
+								FROM
+								notas_fiscais
+								INNER JOIN empresas ON notas_fiscais.empresas_id = empresas.id
+								WHERE
+								notas_fiscais.id = $id";
+			$query = $this->db->query($_sql);
+			#var_dump($query);
+			return ($query->num_rows() > 0) ? $query->row() : FALSE;
+		}
 	}
 
 	# ID da nota fiscal, assim pegar todos os seus itens já cadastrados.
@@ -130,10 +155,23 @@ class Notas_model extends CI_Model {
 		if ($err_count == 0) {
 			$query = $this->db->insert('itens_notas_fiscais', $data);
 			if ($this->db->affected_rows() > 0) {
-				return $query;
-			} else
+				$_sql = "SELECT
+									produtos.id,
+									produtos.modelo,
+									marcas_produtos.marca,
+									grupo_produtos.nome AS grupo_produto
+									FROM
+									produtos
+									INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+									INNER JOIN grupo_produtos ON produtos.grupo_produtos_id = grupo_produtos.id
+									WHERE produtos.id = $produtos_id";
+				$getItem = $this->db->query($_sql);
+				return ($getItem->num_rows() > 0) ? $getItem->row() : FALSE;
+			} 
+			else
 				return FALSE;
-		} else
+		} 
+		else
 			return FALSE;
 	}
 
@@ -222,16 +260,18 @@ class Notas_model extends CI_Model {
 	}
 
 	public function concluir_atualizar_estoque($id) {
+		# Pegando o ID do Almoxarifado Principal
+		$almox = $this->getAlmox();
 		$err_count = 0;
 		$this->db->select('*');
 		$this->db->where('notas_fiscais_id', $id);
 		$query = $this->db->get('itens_notas_fiscais');
 		foreach ($query->result() as $query) {
-			$controle = $this->db->get_where('estoques', array('produtos_id' => $query->produtos_id, 'lotacoes_id' => 23));
+			$controle = $this->db->get_where('estoques', array('produtos_id' => $query->produtos_id, 'lotacoes_id' => $almox));
 			if (0 !== $controle->num_rows()) {
 				$estoque_atual = $controle->row();
 				$novo_estoque = $estoque_atual->quantidade + $query->quantidade_item;
-				$this->db->where(array('produtos_id' => $query->produtos_id, 'lotacoes_id' => 23));
+				$this->db->where(array('produtos_id' => $query->produtos_id, 'lotacoes_id' => $almox));
 				$this->db->update('estoques', array('quantidade' => $novo_estoque));
 				# Havendo erro
 				if ($this->db->affected_rows() < 1) {
@@ -241,7 +281,7 @@ class Notas_model extends CI_Model {
 			}
 			else {
 				$novo_estoque = $query->quantidade_item;
-				$this->db->insert('estoques', array('produtos_id' => $query->produtos_id, 'lotacoes_id' => 23, 'quantidade' => $novo_estoque));
+				$this->db->insert('estoques', array('produtos_id' => $query->produtos_id, 'lotacoes_id' => $almox, 'quantidade' => $novo_estoque));
 				# Havendo erro
 				if ($this->db->affected_rows() < 1) {
 					$produtos[$err_count] = $query->modelo;
@@ -275,21 +315,205 @@ class Notas_model extends CI_Model {
 		return $query;
 	}
 
-	public function getInfoNotas() {
-		$this->db->where('concluido', '0');
-		$query = $this->db->get('notas_fiscais');
-		return $query;
+	public function getInfoNotas($id = NULL) {
+		if (is_null($id)) {
+			$this->db->where('concluido', '0');
+			$query = $this->db->get('notas_fiscais');
+		}
+		else {
+			$sql = "SELECT
+								notas_fiscais.id,
+								notas_fiscais.numero,
+								notas_fiscais.data,
+								notas_fiscais.valor,
+								notas_fiscais.tipo,
+								empresas.nome_fantasia AS empresa,
+								CONCAT(
+									enderecos.logradouro,
+									', ',
+									enderecos.numero,
+									', ',
+									enderecos.bairro,
+									'. ',
+									enderecos.cidade,
+									'/',
+									enderecos.estado) AS endereco,
+								enderecos.cep,
+								contatos.nome,
+								contatos.telefones_id,
+								contatos.email,
+								telefones.telefone,
+								IF (notas_fiscais.ativo = 0, 'válida','cancelada') AS situacao,
+								notas_fiscais.ativo = 0
+								FROM
+									notas_fiscais
+									INNER JOIN empresas ON notas_fiscais.empresas_id = empresas.id
+									INNER JOIN enderecos ON empresas.enderecos_id = enderecos.id
+									INNER JOIN contatos_das_empresas ON contatos_das_empresas.empresas_id = empresas.id
+									INNER JOIN contatos ON contatos_das_empresas.contatos_id = contatos.id
+									INNER JOIN telefones ON contatos.telefones_id = telefones.id
+								WHERE notas_fiscais.ativo = 0 AND notas_fiscais.id = $id";
+			$query = $this->db->query($sql);
+		}
+		return ($query->num_rows() > 0)? $query : FALSE;
+	}
+
+	public function getItensNota($id, $det = FALSE) {
+		if ($id > 0) {
+			if ($det === FALSE) {
+				$sql = "SELECT
+									itens_notas_fiscais.id AS id_itens,
+									marcas_produtos.marca,
+									produtos.modelo,
+									itens_notas_fiscais.valor_unitario,
+									itens_notas_fiscais.quantidade_item,
+									itens_notas_fiscais.produtos_id,
+									produtos.consumo
+									FROM
+									itens_notas_fiscais
+									INNER JOIN produtos ON itens_notas_fiscais.produtos_id = produtos.id
+									INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+									WHERE
+										itens_notas_fiscais.notas_fiscais_id = $id";
+			}
+			else {
+				$sql = "SELECT
+									itens_notas_fiscais.id AS id_itens,
+									itens_notas_fiscais.produtos_id,
+									marcas_produtos.marca,
+									produtos.modelo,
+									itens_notas_fiscais.quantidade_item,
+									itens_notas_fiscais.valor_unitario,
+									produtos.consumo,
+									patrimonio.id AS tombo_id,
+									patrimonio.tombo,
+									notas_fiscais.concluido AS nota_concluida
+									FROM
+										itens_notas_fiscais
+										INNER JOIN notas_fiscais ON itens_notas_fiscais.notas_fiscais_id = notas_fiscais.id
+										INNER JOIN produtos ON itens_notas_fiscais.produtos_id = produtos.id
+										INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+										LEFT JOIN patrimonio ON patrimonio.produtos_id = produtos.id AND itens_notas_fiscais.notas_fiscais_id = patrimonio.notas_id
+									WHERE
+										itens_notas_fiscais.notas_fiscais_id = $id";
+			}
+			$query = $this->db->query($sql);
+			return ($query->num_rows() > 0)? $query->result() : FALSE;
+		}
+		else return FALSE;
+	}
+
+	public function getItemNota($id, $det = FALSE) {
+		if (! $det) {
+			$_sql = "SELECT
+									itens_notas_fiscais.id,
+									itens_notas_fiscais.produtos_id,
+									produtos.consumo,
+									marcas_produtos.marca,
+									produtos.modelo,
+									itens_notas_fiscais.quantidade_item,
+									itens_notas_fiscais.valor_unitario
+									FROM
+											itens_notas_fiscais
+											INNER JOIN produtos ON itens_notas_fiscais.produtos_id = produtos.id
+											INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+									WHERE
+											itens_notas_fiscais.id = $id";
+			$query = $this->db->query($_sql);
+			return ($query->num_rows() > 0) ? $query->row() : FALSE;
+		}
+		else {
+			$_sql = "SELECT
+								itens_notas_fiscais.id,
+								itens_notas_fiscais.produtos_id,
+								marcas_produtos.marca,
+								produtos.modelo,
+								produtos.consumo,
+								itens_notas_fiscais.quantidade_item,
+								itens_notas_fiscais.valor_unitario,
+								empresas.nome_fantasia AS empresa,
+								itens_notas_fiscais.notas_fiscais_id,
+								patrimonio.id AS tombo_id,
+								patrimonio.tombo,
+								notas_fiscais.numero
+								FROM
+									itens_notas_fiscais
+									INNER JOIN produtos ON itens_notas_fiscais.produtos_id = produtos.id
+									INNER JOIN notas_fiscais ON itens_notas_fiscais.notas_fiscais_id = notas_fiscais.id
+									INNER JOIN marcas_produtos ON produtos.marcas_produtos_id = marcas_produtos.id
+									INNER JOIN empresas ON notas_fiscais.empresas_id = empresas.id
+									LEFT JOIN patrimonio ON patrimonio.produtos_id = produtos.id AND patrimonio.notas_id = itens_notas_fiscais.notas_fiscais_id
+								WHERE itens_notas_fiscais.id = $id";
+			$query = $this->db->query($_sql);
+			return ($query->num_rows() > 0) ? $query->result() : FALSE;
+		}
+	}
+
+	public function excluir_item_nota($id) {
+		$err_count = 0;
+		$item = $this->getItemNota($id, TRUE);
+		# Se não existir o item...
+		if (! $item) {
+			return FALSE;
+		}
+		# Se existir...
+		else {
+			# Excluindo o patrimonio
+			if (count($item) > 1) {
+				foreach ($item as $row) {
+					$whr = array('id' => $row->tombo_id);
+					$this->db->where($whr);
+					$this->db->delete('patrimonio');
+					$err_count += ($this->db->affected_rows() > 0)? 0 : 1;
+				}
+				if ($err_count == 0) {
+					$this->db->where('id', $id);
+					$this->db->delete('itens_notas_fiscais');
+					return ($this->db->affected_rows() > 0)? TRUE : FALSE;
+				}
+				else return FALSE;
+			}
+			else {
+				$this->db->where('id', $id);
+				$this->db->delete('itens_notas_fiscais');
+				return ($this->db->affected_rows() > 0)? TRUE : FALSE;
+			}
+			return ($err_count == 0)? TRUE : FALSE;
+		}
 	}
 
 	public function excluir_nota($id) {
-		# Excluir notas fiscais, caso não tenha sido concluída!
-		$this->db->where('concluido', '0');
-		$this->db->where('id', $id);
-		$query = $this->db->delete('notas_fiscais');
-		return $this->db->affected_rows();
+		$err_count = 0;
+		# Testa se existe a nota
+		if (! $this->getInfoNotas($id)) {
+			return FALSE;
+		}
+		else {
+			# Testando se existe itens na nota
+			$itens = $this->getItensNota($id);
+			if ($itens !== FALSE) {
+				foreach ($itens as $item) {
+					$err_count += (! $this->excluir_item_nota($item->id_itens))? 1 : 0;
+				}
+			}
+			if ($err_count < 1) {
+				# Excluir notas fiscais, caso não tenha sido concluída!
+				$this->db->where('concluido', '0');
+				$this->db->where('id', $id);
+				$query = $this->db->delete('notas_fiscais');
+				return ($this->db->affected_rows() > 0)? $this->db->affected_rows() : FALSE;
+			}
+		}
 	}
 
 	public function excluir_nota_concluida($id) {
+		# Pegando o ID do Almoxarifado Principal
+		$almox = $this->getAlmox();
+		# Excluindo itens se houver
+		$controle = $this->getItensNota($id);
+		/*echo "<pre>";
+			var_dump($controle); 
+		echo "</pre>";	die();*/
 		$err_count = 0;
 		$produtos = Array();
 		$listTombos = Array();
@@ -317,20 +541,22 @@ class Notas_model extends CI_Model {
 			# Se for produto...
 			else {
 				$_sql = "SELECT
-									itens_notas_fiscais.id as id_itens,
+									itens_notas_fiscais.id AS id_itens,
 									itens_notas_fiscais.valor_unitario,
 									itens_notas_fiscais.quantidade_item,
 									produtos.modelo,
 									produtos.consumo,
-									notas_fiscais.concluido,
-									itens_notas_fiscais.produtos_id
+									itens_notas_fiscais.produtos_id,
+									patrimonio.id AS tombo_id,
+									patrimonio.tombo,
+									notas_fiscais.concluido
 									FROM
 										itens_notas_fiscais
 										INNER JOIN notas_fiscais ON itens_notas_fiscais.notas_fiscais_id = notas_fiscais.id
 										INNER JOIN produtos ON itens_notas_fiscais.produtos_id = produtos.id
+										LEFT JOIN patrimonio ON patrimonio.produtos_id = produtos.id AND itens_notas_fiscais.notas_fiscais_id = patrimonio.notas_id
 									WHERE
-										itens_notas_fiscais.notas_fiscais_id = {$id}";
-				#echo $_sql; die();
+									itens_notas_fiscais.notas_fiscais_id = {$id}";
 			}
 			# Executando a query
 			$query = $this->db->query($_sql);
@@ -340,83 +566,96 @@ class Notas_model extends CI_Model {
 				foreach ($query->result() as $itens_nota) {
 					# Sendo material permanente, testa se houve saída de material
 					if ($itens_nota->consumo == 1) {
+						if (! isset($produtos[$itens_nota->produtos_id])) $produtos[$itens_nota->produtos_id] = $itens_nota->quantidade_item;
 						$saidas = "SELECT
-												cautelas_has_produtos.cautelas_id,
+												itens_notas_fiscais.id AS item_id,
+												itens_notas_fiscais.notas_fiscais_id,
+												itens_notas_fiscais.produtos_id,
+												produtos.modelo,
 												cautelas_has_produtos.tombo_id,
 												patrimonio.tombo,
-												cautelas.distribuicao, 
+												cautelas_has_produtos.cautelas_id,
+												cautelas.distribuicao,
 												cautelas.concluida
 												FROM
-												patrimonio
-												INNER JOIN cautelas_has_produtos ON patrimonio.id = cautelas_has_produtos.tombo_id
+												cautelas_has_produtos
+												INNER JOIN produtos ON cautelas_has_produtos.produtos_id = produtos.id
 												INNER JOIN cautelas ON cautelas_has_produtos.cautelas_id = cautelas.id
+												INNER JOIN patrimonio ON cautelas_has_produtos.tombo_id = patrimonio.id
+												INNER JOIN itens_notas_fiscais ON patrimonio.notas_id = itens_notas_fiscais.notas_fiscais_id AND patrimonio.produtos_id = itens_notas_fiscais.produtos_id
 												WHERE
-												patrimonio.notas_id = $id AND patrimonio.produtos_id = $itens_nota->produtos_id AND cautelas.ativa = 1";
-						$hasSaida =  $this->db->query($saidas);
+												(cautelas.cancelada = 0 AND cautelas.ativa = 1) AND
+												cautelas_has_produtos.tombo_id = $itens_nota->tombo_id";
+						$hasSaida = $this->db->query($saidas);
 						# Se houver alguma saída de material permanente, lista os tombos que saíram
-						if (! is_bool($hasSaida)) {
-							# Preenchendo a lista de tombos
-							foreach ($hasSaida->result() as $saida) {
-								# Distros e transferências
-								if ($saida->distribuicao > 0) {
+						if ($hasSaida->num_rows() > 0) {
+							$saida = $hasSaida->row();
+							## Preenchendo a lista de tombos
+							# Distros e transferências
+							if ($saida->distribuicao > 0) {
+								$listTombos[] = $saida->tombo;
+							}
+							# Cautelas
+							else {
+								if ($saida->concluida == 0) {
 									$listTombos[] = $saida->tombo;
 								}
-								# Cautelas
-								else {
-									if ($saida->concluida == 0) {
-										$listTombos[] = $saida->tombo;
-									}
-								}              
 							}
-						}          
-					}
-					# Testa se existe o produto no estoque e conta os erros
-					$checaEstoque = "SELECT quantidade FROM estoques WHERE (produtos_id = " . $itens_nota->produtos_id . ") AND (lotacoes_id = 23)";
-					$controle = $this->db->query($checaEstoque);
-					if (! is_bool($controle->num_rows())) {
-						$produto = $controle->row();
-						# Testando se o estoque ficará negativo
-						if (($produto->quantidade - $itens_nota->quantidade_item) >= 0) {
-							# Se o estoque não ficar negativo, alimenta o array que irá atualizar o estoque...
-							$produtos[$itens_nota->produtos_id] = ($produto->quantidade - $itens_nota->quantidade_item);
 						}
-						else {
-							# Contando os erros de estoque negativo
+						else $produtos[$itens_nota->produtos_id] = $produtos[$itens_nota->produtos_id] - 1;
+					} # .permanente
+					# Sendo consumo, testa se existe o produto no estoque e conta os erros
+					else {	
+						$checaEstoque = "SELECT quantidade FROM estoques WHERE (produtos_id = $itens_nota->produtos_id) AND (lotacoes_id = $almox)";
+						$controle = $this->db->query($checaEstoque);
+						if ($controle->num_rows() > 0) {
+							$produto = $controle->row();
+							# Testando se o estoque ficará negativo
+							if (($produto->quantidade - $itens_nota->quantidade_item) >= 0) {
+								# Se o estoque não ficar negativo, alimenta o array que irá atualizar o estoque...
+								$produtos[$itens_nota->produtos_id] = ($produto->quantidade - $itens_nota->quantidade_item);
+							}
+							else {
+								# Contando os erros de estoque negativo
+								$err_count += 1;
+							}
+						}
+						/* else {
+							# Contando os erros de produto que não existe no estoque
 							$err_count += 1;
-						}
-					}
-					else {
-						# Contando os erros de produto que não existe no estoque
-						$err_count += 1;
-					}
-				}
-				# Verificando os erros para poder atualizar o estoque
-				if (count($listTombos) > 0) {
-					# Retorno quando o erro é a existência de sáida de material permanente constante da nota
-					$retorno = array( 
-						'status' => FALSE,
-						'tombos' => $listTombos
-					);
-					return $retorno;
-				}
+						}*/
+					} # .consumo
+				} # .foreach
+				## Verificando os erros para poder atualizar o estoque
 				if ($err_count > 0) {
-					# Retorno quando o erro é alteração no estoque
+					# Erro no material de consumo,alteração no estoque
 					$retorno = array( 
 						'status' => FALSE,
 						'msg' => 'O sistema não consegue excluir a nota, estoque de '.$err_count.' produto(s) ficará negativo!'
 					);
 					return $retorno;
 				}
-				# Tentando atualizar o estoque, inativar/excluir a nota e dar o retorno
+				# Se não houver erro de estoque vazio...
 				else {
-					if (count($produtos) > 0) {
+					# Testando se dá erro no material permanente
+					if (count($listTombos) > 0) {
+						# Retorno quando o erro é a existência de saída de material permanente constante da nota
+						$tombos = rtrim(implode($listTombos, ", "), ", ");
+						$retorno = array( 
+							'status' => FALSE,
+							'msg' => "Existe saída de material com os seguintes tombos desta nota: $tombos"
+						);
+						return $retorno;
+					}
+					else {
 						$err_count = 0;
+						# var_dump($produtos); die();
 						foreach ($produtos as $_id => $_qde) {
-							$this->db->where(array('produtos_id'=>$_id, 'lotacoes_id'=>23));
+							$this->db->where(array('produtos_id' => $_id, 'lotacoes_id' => $almox));
 							$this->db->update('estoques', array('quantidade'=>$_qde));
 							# Contando os erros de atualização
 							$err_count += (0 < $this->db->affected_rows()) ? 0 : 1;
-						}
+						} # .foreach
 						# Se não houver nenhum erro de atualização do estoque, tenta inativar/excluir a nota e dá o retorno
 						if ($err_count == 0) {
 							$this->db->where('id', $id);
@@ -448,11 +687,11 @@ class Notas_model extends CI_Model {
 								}
 							}
 						}
-						else{
-							# Retorno quando houve erro na atualização do estoque de algum produto
+						# Retorno quando o erro é na atualização do estoque
+						else {
 							$retorno = array( 
 								'status' => FALSE,
-								'msg' => 'O sistema não conseguiu excluir a nota, o estoque de '.$err_count.' produto(s) não foi atualizado!'
+								'msg' => 'O sistema não conseguiu atualizar o estoque dos produtos desta nota!'
 							);
 							return $retorno;
 						}

@@ -13,14 +13,22 @@ class Notas extends MX_Controller {
 	function __construct() {
 		parent::__construct();
 		$this->load->model(array('clog_model', 'notas_model', 'produtos_model'));
-		# $this->load->library(array('auth'));
+		$this->load->library(array('auth'));
 		# $this->output->enable_profiler(TRUE);
 		# $this->load->helper('cbmrn');
 	}
 
 	public function index() {
-		# Index
-		$this->cadastro();
+		## Index
+		# Pegando o ID do Almoxarifado Principal
+		$almox = $this->clog_model->getAlmox();
+		if (! $almox) {
+			$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => "Procure o administrador, não existe almoxarifado principal cadastrado!"));
+			redirect('clog/notas/index');
+		}
+		else {
+			$this->cadastro();
+		}
 	}
 
 	public function cadastro() {
@@ -44,8 +52,9 @@ class Notas extends MX_Controller {
 				$id_nota_fiscal = $this->notas_model->dados_notas();
 				if (is_int($id_nota_fiscal)) {
 					# Bloco de auditoria
+					$info_nota = $this->notas_model->dados_notas($id_nota_fiscal);
 					$auditoria = array(
-							'auditoria' => 'Incluiu nova nota fiscal ID n° ' . $id_nota_fiscal . ' no sistema',
+							'auditoria' => "Incluiu nova nota fiscal de n° $info_nota->numero, expedida pela $info_nota->empresa, no sistema",
 							'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo' => $this->session->userdata['sistema']
 					);
@@ -56,7 +65,7 @@ class Notas extends MX_Controller {
 				} else {
 					# Bloco de auditoria
 					$auditoria = array(
-							'auditoria' => 'Tentativa de incluir uma nova nota fiscal no sistema',
+							'auditoria' => "Tentativa de incluir uma nova nota fiscal no sistema",
 							'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 							'idmodulo' => $this->session->userdata['sistema']
 					);
@@ -104,10 +113,11 @@ class Notas extends MX_Controller {
 
 	public function add_itens_nota($id_nota) {
 		# Adicionar itens a nota fiscal.
-		if ($this->notas_model->add_item($id_nota) === FALSE) {
+		$controle = $this->notas_model->add_item($id_nota);
+		if ($controle === FALSE) {
 		# Bloco de auditoria
 			$auditoria = array(
-					'auditoria' => 'Tentativa de incluir novo item na nota fiscal ID n° ' . $id_nota,
+					'auditoria' => "Tentativa de incluir novo item na nota fiscal ID n° $id_nota",
 					'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 					'idmodulo' => $this->session->userdata['sistema']
 			);
@@ -117,8 +127,9 @@ class Notas extends MX_Controller {
 		}
 		else {
 			# Bloco de auditoria
+			$info_nota = $this->notas_model->dados_notas($id_nota);
 			$auditoria = array(
-					'auditoria' => 'Incluiu novo item na nota fiscal ID n° ' . $id_nota,
+					'auditoria' => "Incluiu novo item($controle->modelo) na nota fiscal de n° $info_nota->numero, expedida pela $info_nota->empresa",
 					'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 					'idmodulo' => $this->session->userdata['sistema']
 			);
@@ -129,39 +140,52 @@ class Notas extends MX_Controller {
 		redirect("clog/notas/itens_nota/$id_nota");
 	}
 
-	public function excluir_itens_nota($id_nota, $id_notas_fiscais) {
-		if (isset($id_nota)) {
-			$exclusao = $this->clog_model->excluir('itens_notas_fiscais', $id_nota);
-			if (!$exclusao) {
+	public function excluir_itens_nota($id_item_nota, $id_nota) {
+		# Dados para a auditoria
+		$info_nota = $this->notas_model->getInfoNotas($id_nota)->row();
+		$info_item = $this->notas_model->getItemNota($id_item_nota);
+		if (isset($id_item_nota)) {
+			$exclusao = $this->notas_model->excluir_item_nota($id_item_nota);
+			if (! $exclusao) {
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => "Erro. O item de ID n° $id_item_nota ($info_item->modelo) não foi excluído!"));
 				# Bloco de auditoria
 				$auditoria = array(
-						'auditoria' => 'Tentativa de excluir o item ID n° ' . $id_nota . ', da nota ID n° ' . $id_notas_fiscais,
+						'auditoria' => "Tentativa de excluir o item ID n° $id_item_nota ($info_item->modelo), da nota n° $info_nota->numero, expedida pela empresa $info_nota->empresa",
 						'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 						'idmodulo' => $this->session->userdata['sistema']
 				);
 				$this->clog_model->audita($auditoria, 'excluir');
 				# .Bloco de auditoria
 			} else {
+				$this->session->set_flashdata('mensagem', array('type' => 'alert-success', 'msg' => "O item ID n° $id_item_nota ($info_item->modelo) foi excluído com sucesso!"));
 				# Bloco de auditoria
 				$auditoria = array(
-						'auditoria' => 'Excluiu o item ID n° ' . $id_nota . ', da nota ID n° ' . $id_notas_fiscais,
+						'auditoria' => "Excluiu o item ID n° $id_nota($info_item->modelo), da nota n° $info_nota->numero, expedida pela empresa $info_nota->empresa",
 						'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 						'idmodulo' => $this->session->userdata['sistema']
 				);
 				$this->clog_model->audita($auditoria, 'excluir');
 				# .Bloco de auditoria
 			}
-			redirect("clog/notas/itens_nota/$id_notas_fiscais");
-		} else
-			die();# Checar depois
+			redirect("clog/notas/itens_nota/$id_nota");
+		} else {
+			$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => "Erro. O item ou sua nota não existem no sistema!"));
+			redirect('clog/notas/index');
+		}
 	}
 
 	public function entrada_avulsa() {
+		# Pegando o ID do Almoxarifado Principal
+		$almox = $this->clog_model->getAlmox();
+		if (! $almox) {
+			$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => "Procure o administrador, não existe almoxarifado principal cadastrado!"));
+			redirect('clog/index');
+		}
 		# Carregando os selects
 		$entradas = $this->notas_model->listarEntradasAvulsas(10);
 		$produtos = $this->produtos_model->getProdutos();
 		$setores = $this->clog_model->getLotacoes();
-		$conteudo = $this->load->view('notas/entrada_avulsa', array('produtos' => $produtos, 'setores'=>$setores, 'entradas'=>$entradas), TRUE);
+		$conteudo = $this->load->view('notas/entrada_avulsa', array('produtos' => $produtos, 'setores'=>$setores, 'entradas'=>$entradas, 'almox'=>$almox), TRUE);
 		$this->load->view('layout/index', array('layout' => $conteudo), FALSE);
 		# Processando quando tem POST
 		if ($this->input->server('REQUEST_METHOD') == 'POST') {
@@ -344,11 +368,13 @@ class Notas extends MX_Controller {
 	 *
 	 */
 	public function excluir_nota($id) {
-		# Excluír nota fiscal caso ainda não tenha sido concluída.
+		# Dados para a auditoria
+		$info_nota = $this->notas_model->dados_notas($id);
+		# Excluir nota fiscal caso ainda não tenha sido concluída.
 		if ($this->notas_model->excluir_nota($id) >= 1) {
 			# Bloco de auditoria
 			$auditoria = array(
-					'auditoria' => 'Excluiu a nota fiscal ID n° ' . $id,
+					'auditoria' => "Excluiu a nota fiscal de n° $info_nota->numero, expedida pela $info_nota->empresa",
 					'idmilitar' => $this->session->userdata['id_militar'], #Checar quem está acessando e permissões
 					'idmodulo' => $this->session->userdata['sistema']
 			);
@@ -392,15 +418,8 @@ class Notas extends MX_Controller {
 			);
 			$this->clog_model->audita($auditoria, 'excluir');
 			# .Bloco de auditoria
-			if (is_array($excluir) && $excluir['status'] === FALSE) {	
-				if (isset($excluir['tombos'])) {
-					$tombos = rtrim(implode($excluir['tombos'], ", "), ", ");
-					$msg = "Existem saídas de material com os seguintes tombos desta nota: $tombos";
-				}
-				else {
-					$msg = $excluir['msg'];
-				}
-			}
+			# Retorno para o usuário
+			$msg = (is_array($excluir) && $excluir['status'] === FALSE)? $excluir['msg'] : "O sistema não conseguiu excluir a nota!";
 			$this->session->set_flashdata('mensagem', array('type' => 'alert-danger', 'msg' => $msg));
 		}
 		redirect('clog/notas/consulta');

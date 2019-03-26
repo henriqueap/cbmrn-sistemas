@@ -30,7 +30,7 @@
 										<?php 
 										if(!is_bool($setores)) {
 											foreach ($setores->result() as $setor): ?>
-												<option value="<?php echo $setor->lotacoes_id; ?>" <?php echo ($setor->lotacoes_id == 23)? "selected" : ""; ?>><?php echo $setor->almoxarifado; ?></option>
+												<option value="<?php echo $setor->lotacoes_id; ?>"><?php echo $setor->almoxarifado; ?></option>
 											<?php endforeach; 
 										} ?>
 								</select>

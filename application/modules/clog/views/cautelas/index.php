@@ -9,7 +9,7 @@
 						break;
 					
 					case '1':
-						echo "Saída de Material - Distribuição de Material de Consumo";
+						echo "Saída de Material - Distribuição de Material de Consumo para Militar";
 						break;
 					
 					case '2':
@@ -17,7 +17,7 @@
 						break;
 
 					case '3':
-						echo "Saída de Material - Distribuição de Material Permanente";
+						echo "Saída de Material - Distribuição de Material de Consumo para Setor";
 						break;
 					
 					default:
@@ -46,6 +46,21 @@
 								<label class="control-label" id="nome_militar"></label>
 							</div>
 						</div>
+						<!-- Estoque origem -->
+						<div class="form-group">
+							<label for="estoque_origem" class="col-sm-3 control-label">Almoxarifado de Origem</label>
+							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
+								<select name="estoque_origem" class="form-control" id="estoque_origem" title="Estoque de origem do material">
+									<option value="0">Selecione</option>
+										<?php 
+										if(!is_bool($estoques)) {
+											foreach ($estoques->result() as $estoque): ?>
+												<option value="<?php echo $estoque->lotacoes_id; ?>"><?php echo $estoque->almoxarifado; ?></option>
+											<?php endforeach; 
+										} ?>
+								</select>
+							</div>
+						</div>
 						<!-- Setor -->
 						<?php if ($tipo_saida == 0) { ?>
 							<!-- Devolução prevista -->
@@ -58,10 +73,10 @@
 										<input name="data_prevista" id="data_devolucao" class="form-control data" type="text" aria-describedby="calendar-add-on" placeholder="Data prevista" rel="date" title="Colocar data prevista apenas se for cautela" readonly required/>
 									</div>
 								</div>
-								<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
+								<!--<div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
 									<h6>* Colocar data prevista apenas se for cautela</h6>
 								</div>
-							</div>
+							</div>-->
 							<?php
 						} 
 						if ($tipo_saida > 1) { ?>
@@ -78,21 +93,6 @@
 							</div>
 							<?php
 						} ?>
-						<!-- Estoque origem -->
-						<div class="form-group">
-							<label for="estoque_origem" class="col-sm-3 control-label">Almoxarifado de Origem</label>
-							<div class="col-sm-12 col-md-2 col-lg-2 col-xs-12">
-								<select name="estoque_origem" class="form-control" id="estoque_origem" title="Estoque de origem do material">
-									<option value="0">Selecione</option>
-										<?php 
-										if(!is_bool($estoques)) {
-											foreach ($estoques->result() as $estoque): ?>
-												<option value="<?php echo $estoque->lotacoes_id; ?>"><?php echo $estoque->almoxarifado; ?></option>
-											<?php endforeach; 
-										} ?>
-								</select>
-							</div>
-						</div>
 						<!-- Submeter -->
 						<div class="form-group">
 							<div class="col-sm-12 col-md-6 col-lg-6 col-xs-12 col-sm-offset-2">
